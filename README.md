@@ -66,3 +66,12 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `yarn build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+### Puppeteer
+
+The [following command](https://github.com/puppeteer/puppeteer/issues/4752) can be run to prevent the network connection popup on each run:
+
+```
+APP=$(find node_modules/puppeteer -name Chromium.app)
+sudo codesign --force --deep --sign - "./${APP}"
+```

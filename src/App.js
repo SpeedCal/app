@@ -19,7 +19,7 @@ class App extends React.Component {
             <Home />
           </Route>
           <Route exact path="/calendar.jpg">
-            <Image />
+            <Calendar />
           </Route>
         </Switch>
       </Router>
