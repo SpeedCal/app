@@ -7,6 +7,7 @@ const winston = require('winston')
 const puppeteer = require('puppeteer')
 const handlebars = require('handlebars')
 const expressWinston = require('express-winston')
+const pidusage = require('pidusage')
 
 const isDebugging = () => {
   const debugging_mode = {
@@ -52,9 +53,17 @@ app.use(expressWinston.logger({
   ignoreRoute: function (req, res) { return false; } // optional: allows to skip some log messages based on request and/or response
 }));
 
+
+app.get('/stats', async (req, res) => {
+  const proc = browser.process()
+  const usage = await pidusage(proc.pid)
+  logger.info(usage)
+  res.json(usage)
+});
+
 app.get('*', async (req, res) => {
   await page.goto(`http://localhost:${process.env.PORT}${req.url}`);
-  await page.screenshot({path: 'example.png'});
+  await page.screenshot({path: 'snapshots/example.png'});
 
   res.send('Hello World!');
 });
@@ -69,7 +78,7 @@ const server = app.listen(process.env.API_PORT, async () => {
 
 async function cleanup() {
   console.log('cleanup...')
-  !!browser && await browser.close() || console.log('No browser detected')
+  !!browser && await browser.close()
   server.close(() => process.kill(process.pid, 'SIGUSR2'))
 }
 process.once('exit', async () => await cleanup())
