@@ -12,6 +12,7 @@
     "express": "^4.17.1",
     "express-winston": "^4.0.3",
     "handlebars": "^4.7.3",
+    "pidusage": "^2.0.18",
     "puppeteer": "^2.1.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
@@ -48,5 +49,8 @@
     "@babel/node": "^7.8.7",
     "@babel/preset-env": "^7.9.0",
     "nodemon": "^2.0.2"
+  },
+  "nodemonConfig": {
+    "watch": ["api/"]
   }
 }

@@ -1,5 +1,7 @@
 import React from "react";
 import * as dateFns from "date-fns";
+import { useLocation } from 'react-router';
+import queryString from 'query-string';
 
 class Calendar extends React.Component {
   state = {
@@ -9,6 +11,8 @@ class Calendar extends React.Component {
 
   renderHeader() {
     const dateFormat = "MMMM yyyy";
+    //const location = useLocation()
+    //console.log(queryString.parse(location.search))
 
     return (
       <div className="header row flex-middle">
