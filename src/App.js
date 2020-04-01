@@ -6,9 +6,8 @@ import {
   //Link
 } from "react-router-dom";
 
-import Calendar from "./components/Calendar";
-//import Image from "./components/Image";
-import { logger } from "./services/Logger";
+import Calendar from "components/Calendar";
+//import Image from "components/Image";
 import "./App.css";
 
 class App extends React.Component {

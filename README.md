@@ -75,3 +75,7 @@ The [following command](https://github.com/puppeteer/puppeteer/issues/4752) can 
 APP=$(find node_modules/puppeteer -name Chromium.app)
 sudo codesign --force --deep --sign - "./${APP}"
 ```
+
+### To Do
+
+- Implement https://www.npmjs.com/package/api-key-auth

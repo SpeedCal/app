@@ -2,6 +2,7 @@ import React from "react";
 import * as dateFns from "date-fns";
 import { useLocation } from 'react-router';
 import queryString from 'query-string';
+import { logger } from "services/Logger";
 
 class Calendar extends React.Component {
   state = {
