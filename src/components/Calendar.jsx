@@ -1,17 +1,52 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import * as dateFns from "date-fns";
-import { logger } from "services/Logger";
-
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useHistory, withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 
-function Calendar(){
-  const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(new Date());
+//import { logger } from "services/Logger";
 
-  const onDateClick = daySecondsTimestamp => {
-    let day = dateFns.parse(daySecondsTimestamp, 't', new Date())
+//function Calendar(){
+const Calendar = ({ history }) => {
+  //const history = useHistory()
+  const location = useLocation()
+  const search = queryString.parse(location.search)
+  const searchDate = dateFns.parse(search.selected, 'yyyy-MM-dd', new Date())
+  const initialDate = dateFns.isValid(searchDate) ? searchDate : new Date()
+
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(initialDate);
+
+  
+  
+  // const [search, setSearch] = useState(queryString.parse(rawLocation.search));
+  // console.log(rawLocation)
+  // console.log(search)
+  //console.log('history:  ', history.location.search)
+  //console.log('location: ', location.search)
+
+  //history.listen(loc => {
+  //  console.log('loc: ', loc)
+  //})
+  useEffect(() => history.listen((newHistory) => {
+    const newDate = queryString.parse(newHistory.search)?.selected
+    const historyDate = dateFns.parse(newDate, 'yyyy-MM-dd', new Date())
+    setSelectedDate(historyDate)
+  }), [])
+
+  const onDateClick = date => {
+    const day = dateFns.parse(date, 'yyyy-MM-dd', new Date())
+
+    const newState = Object.assign({}, history.state, {
+      selected: date
+    })
+
+    history.push({
+      search: '?' + queryString.stringify(newState),
+      state: newState
+    })
+
     setSelectedDate(day)
+    console.log('CLICK', day, date)
   };
 
   const nextMonth = () => {
@@ -21,10 +56,6 @@ function Calendar(){
   const prevMonth = () => {
     setCurrentMonth(dateFns.subMonths(currentMonth, 1))
   };
-
-  logger.info(useLocation())
-  console.log(dateFns)
-
 
   const renderHeader = () => {
     const dateFormat = "MMMM yyyy";
@@ -92,7 +123,7 @@ function Calendar(){
                 : dateFns.isSameDay(day, selectedDate) ? "selected" : ""
             }`}
             key={day}
-            onClick={() => onDateClick(dateFns.format(cloneDay, 't'))}
+            onClick={() => onDateClick(dateFns.format(cloneDay, 'yyyy-MM-dd'))}
           >
             <span className="number">{formattedDate}</span>
             <span className="bg">{formattedDate}</span>
@@ -119,4 +150,4 @@ function Calendar(){
   );
 }
 
-export default Calendar;
+export default withRouter(Calendar);

@@ -78,4 +78,6 @@ sudo codesign --force --deep --sign - "./${APP}"
 
 ### To Do
 
+- Make a location.search parser service with docs and support for all handled URL parameters
+  - Hook this into history.listen
 - Implement https://www.npmjs.com/package/api-key-auth
