@@ -15,12 +15,8 @@ class App extends React.Component {
     return (
       <Router>
         <Switch>
-          <Route exact path="/">
-            <Home />
-          </Route>
-          <Route exact path="/calendar.jpg">
-            <Calendar />
-          </Route>
+          <Route exact path="/" component={Home} />
+          <Route exact path="/calendar.jpg" component={Calendar} />
         </Switch>
       </Router>
     );

@@ -1,0 +1,16 @@
+{
+	"folders":
+	[
+		{
+			"path": "."
+		}
+	],
+  "settings":
+  {
+      "tab_size": 2
+  },
+  "syntax_override": {
+    "\\.js$": ["Babel", "JavaScript (Babel)"],
+    "\\.jsx$": ["Babel", "JavaScript (Babel)"]
+  }
+}

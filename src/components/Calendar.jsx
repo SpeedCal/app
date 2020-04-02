@@ -1,42 +1,56 @@
-import React from "react";
+import React, { useState } from "react";
 import * as dateFns from "date-fns";
-import { useLocation } from 'react-router';
-import queryString from 'query-string';
 import { logger } from "services/Logger";
 
-class Calendar extends React.Component {
-  state = {
-    currentMonth: new Date(),
-    selectedDate: new Date()
+import { useLocation, useParams } from 'react-router-dom';
+import queryString from 'query-string';
+
+function Calendar(){
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  const onDateClick = daySecondsTimestamp => {
+    let day = dateFns.parse(daySecondsTimestamp, 't', new Date())
+    setSelectedDate(day)
   };
 
-  renderHeader() {
+  const nextMonth = () => {
+    setCurrentMonth(dateFns.addMonths(currentMonth, 1))
+  };
+
+  const prevMonth = () => {
+    setCurrentMonth(dateFns.subMonths(currentMonth, 1))
+  };
+
+  logger.info(useLocation())
+  console.log(dateFns)
+
+
+  const renderHeader = () => {
     const dateFormat = "MMMM yyyy";
-    //const location = useLocation()
-    //console.log(queryString.parse(location.search))
 
     return (
       <div className="header row flex-middle">
         <div className="col col-start">
-          <div className="icon" onClick={this.prevMonth}>
+          <div className="icon" onClick={prevMonth}>
             chevron_left
           </div>
         </div>
         <div className="col col-center">
-          <span>{dateFns.format(this.state.currentMonth, dateFormat)}</span>
+          <span>{dateFns.format(currentMonth, dateFormat)}</span>
         </div>
-        <div className="col col-end" onClick={this.nextMonth}>
+        <div className="col col-end" onClick={nextMonth}>
           <div className="icon">chevron_right</div>
         </div>
       </div>
     );
   }
 
-  renderDays() {
+  const renderDays = () => {
     const dateFormat = "iiii";
     const days = [];
 
-    let startDate = dateFns.startOfWeek(this.state.currentMonth);
+    let startDate = dateFns.startOfWeek(currentMonth);
 
     for (let i = 0; i < 7; i++) {
       days.push(
@@ -49,8 +63,7 @@ class Calendar extends React.Component {
     return <div className="days row">{days}</div>;
   }
 
-  renderCells() {
-    const { currentMonth, selectedDate } = this.state;
+  const renderCells = () => {
     const monthStart = dateFns.startOfMonth(currentMonth);
     const monthEnd = dateFns.endOfMonth(monthStart);
     const startDate = dateFns.startOfWeek(monthStart);
@@ -66,7 +79,11 @@ class Calendar extends React.Component {
     while (day <= endDate) {
       for (let i = 0; i < 7; i++) {
         formattedDate = dateFns.format(day, dateFormat);
+
+        // This is gross - I think this works because `const` prevents further mutation.
+        // If the onClick() fn uses `day` the selected class never moves...
         const cloneDay = day;
+
         days.push(
           <div
             className={`col cell ${
@@ -75,7 +92,7 @@ class Calendar extends React.Component {
                 : dateFns.isSameDay(day, selectedDate) ? "selected" : ""
             }`}
             key={day}
-            onClick={() => this.onDateClick(dateFns.parse(cloneDay))}
+            onClick={() => onDateClick(dateFns.format(cloneDay, 't'))}
           >
             <span className="number">{formattedDate}</span>
             <span className="bg">{formattedDate}</span>
@@ -93,33 +110,13 @@ class Calendar extends React.Component {
     return <div className="body">{rows}</div>;
   }
 
-  onDateClick = day => {
-    this.setState({
-      selectedDate: day
-    });
-  };
-
-  nextMonth = () => {
-    this.setState({
-      currentMonth: dateFns.addMonths(this.state.currentMonth, 1)
-    });
-  };
-
-  prevMonth = () => {
-    this.setState({
-      currentMonth: dateFns.subMonths(this.state.currentMonth, 1)
-    });
-  };
-
-  render() {
-    return (
-      <div className="calendar">
-        {this.renderHeader()}
-        {this.renderDays()}
-        {this.renderCells()}
-      </div>
-    );
-  }
+  return (
+    <div className="calendar">
+      {renderHeader()}
+      {renderDays()}
+      {renderCells()}
+    </div>
+  );
 }
 
 export default Calendar;
