@@ -2,7 +2,9 @@ import 'dotenv/config';
 import cors from 'cors';
 import express from 'express';
 
+const fs = require('fs')
 const url = require('url')
+const path = require('path')
 const winston = require('winston')
 const puppeteer = require('puppeteer')
 const handlebars = require('handlebars')
@@ -53,7 +55,12 @@ app.use(expressWinston.logger({
   ignoreRoute: function (req, res) { return false; } // optional: allows to skip some log messages based on request and/or response
 }));
 
-
+/**
+ * Stats URL
+ * Shows resources consumed by the Puppeteer process
+ * Usage:
+ *   curl http://localhost:3001/stats
+ **/
 app.get('/stats', async (req, res) => {
   const proc = browser.process()
   const usage = await pidusage(proc.pid)
@@ -61,7 +68,24 @@ app.get('/stats', async (req, res) => {
   res.json(usage)
 });
 
-app.get('*', async (req, res) => {
+/**
+ * Raw image URL
+ * Serves an image after translating GET params into a filename.
+ **/
+app.get('/calendar.png', async (req, res) => {
+  const filename = path.join(__dirname, '../snapshots', 'example.png')
+  console.log('filename: ', filename)
+
+  try {
+    if (fs.existsSync(filename)) {
+      res.sendFile(filename)
+    }
+  } catch(err) {
+    res.status(404).send({message: 'File not generated'})
+  }
+});
+
+app.get('/', async (req, res) => {
   await page.goto(`http://localhost:${process.env.PORT}${req.url}`);
   await page.screenshot({path: 'snapshots/example.png'});
 
