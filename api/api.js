@@ -6,10 +6,11 @@ const fs = require('fs')
 const url = require('url')
 const path = require('path')
 const winston = require('winston')
+const pidusage = require('pidusage')
 const puppeteer = require('puppeteer')
 const handlebars = require('handlebars')
 const expressWinston = require('express-winston')
-const pidusage = require('pidusage')
+const expAutoSan = require('express-autosanitizer')
 
 const isDebugging = () => {
   const debugging_mode = {
@@ -43,7 +44,9 @@ if (process.env.NODE_ENV !== 'production') {
 
 let browser, page;
 const app = express();
+
 app.use(cors());
+app.use(expAutoSan.all)
 
 app.use(expressWinston.logger({
   transports: [new winston.transports.Console()],
@@ -69,26 +72,48 @@ app.get('/stats', async (req, res) => {
 });
 
 /**
+ * Builds a filename given a url.parse() object.
+ * Translates query params into a suitable file name.
+ * Might be better to use md5() to generate names in the future, but that
+ * would obfuscate filenames and make development a bit harder.
+ **/
+function buildFilename(parsedUrl){
+  const parsedPath = path.parse(parsedUrl.pathname)
+  const parsedQuery = parsedUrl.query.replace(/=/gi, '_')
+  const fileName = `${parsedPath.name}-${parsedQuery}${parsedPath.ext}`
+  return fileName
+}
+
+/**
  * Raw image URL
  * Serves an image after translating GET params into a filename.
  **/
 app.get('/calendar.png', async (req, res) => {
-  const filename = path.join(__dirname, '../snapshots', 'example.png')
-  console.log('filename: ', filename)
+  const fileName = buildFilename(req._parsedUrl)
+  const filePath = path.join(__dirname, '../snapshots', fileName)
 
   try {
-    if (fs.existsSync(filename)) {
-      res.sendFile(filename)
+    if (fs.existsSync(filePath)) {
+      // Todo: add headers for generation date and other useful meta
+      res.sendFile(filePath)
+    } else {
+      logger.error('Requested file not found', filePath)
+      res.status(404).send({message: 'File not generated'})
     }
   } catch(err) {
-    res.status(404).send({message: 'File not generated'})
+    logger.error('fs.existsSync error', err)
+    res.status(500).send({message: 'Filesystem error'})
   }
 });
 
 app.get('/', async (req, res) => {
   await page.goto(`http://localhost:${process.env.PORT}${req.url}`);
-  await page.screenshot({path: 'snapshots/example.png'});
 
+  const fileName = buildFilename(req._parsedUrl)
+  await page.screenshot({path: `snapshots/calendar${fileName}.png`});
+
+  // Todo: try/catch for err
+  // Todo: 301 to generated snapshot
   res.send('Hello World!');
 });
 
