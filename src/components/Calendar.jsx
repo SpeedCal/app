@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import * as dateFns from "date-fns";
 import { useLocation, useHistory, withRouter } from 'react-router-dom';
 import queryString from 'query-string';
+import { IoIosAdd } from "react-icons/io";
 
 //import { logger } from "services/Logger";
 
@@ -16,8 +17,8 @@ const Calendar = ({ history }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(initialDate);
 
-  
-  
+
+
   // const [search, setSearch] = useState(queryString.parse(rawLocation.search));
   // console.log(rawLocation)
   // console.log(search)
@@ -94,6 +95,10 @@ const Calendar = ({ history }) => {
     return <div className="days row">{days}</div>;
   }
 
+  const makeEvent = () => {
+    console.log("add event")
+  }
+
   const renderCells = () => {
     const monthStart = dateFns.startOfMonth(currentMonth);
     const monthEnd = dateFns.endOfMonth(monthStart);
@@ -121,12 +126,13 @@ const Calendar = ({ history }) => {
               !dateFns.isSameMonth(day, monthStart)
                 ? "disabled"
                 : dateFns.isSameDay(day, selectedDate) ? "selected" : ""
-            }`}
+              }`}
             key={day}
             onClick={() => onDateClick(dateFns.format(cloneDay, 'yyyy-MM-dd'))}
           >
             <span className="number">{formattedDate}</span>
             <span className="bg">{formattedDate}</span>
+            <span><IoIosAdd className="add-event-button" size={25} onClick={makeEvent} /></span>
           </div>
         );
         day = dateFns.addDays(day, 1);

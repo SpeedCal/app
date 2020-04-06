@@ -215,3 +215,10 @@ main {
   flex-basis: calc(100% / 7);
   width: calc(100% / 7);
 }
+
+.add-event-button {
+  opacity: 20%;
+}
+.add-event-button:hover {
+  opacity: 100%;
+}
