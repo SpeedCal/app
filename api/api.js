@@ -12,6 +12,9 @@ const handlebars = require('handlebars')
 const expressWinston = require('express-winston')
 const expAutoSan = require('express-autosanitizer')
 
+// Globals
+const appTitle = 'React Calendar API'
+
 const isDebugging = () => {
   const debugging_mode = {
     headless: false,
@@ -88,35 +91,41 @@ function buildFilename(parsedUrl){
  * Raw image URL
  * Serves an image after translating GET params into a filename.
  **/
-app.get('/calendar.png', async (req, res) => {
+app.get('/', async (req, res) => {
+  const hrstart = process.hrtime()
   const fileName = buildFilename(req._parsedUrl)
-  const filePath = path.join(__dirname, '../snapshots', fileName)
+  const filePath = path.join(__dirname, '../snapshots', `calendar${fileName}.png`)
 
   try {
-    if (fs.existsSync(filePath)) {
-      // Todo: add headers for generation date and other useful meta
-      res.sendFile(filePath)
-    } else {
-      logger.error('Requested file not found', filePath)
-      res.status(404).send({message: 'File not generated'})
+    if (!fs.existsSync(filePath)) {
+      await page.goto(`http://localhost:${process.env.PORT}${req.url}`);
+      await page.screenshot({path: `snapshots/calendar${fileName}.png`});
+      logger.info(`Generating new snapshot: ${filePath}`)
     }
   } catch(err) {
-    logger.error('fs.existsSync error', err)
-    res.status(500).send({message: 'Filesystem error'})
+    logger.error('fs.existsSync', err)
+    res.status(500).send({message: 'Filesystem error 01'})
   }
+
+  try {
+    const stat = fs.statSync(filePath)
+    res.set('X-RCA-birthtime', stat.birthtime)
+  } catch(err) {
+    logger.error('fs.statSync', err)
+    res.status(500).send({message: 'Filesystem error 02'})
+  }
+
+  const hrend = process.hrtime(hrstart)
+  res.set('X-RCA-rendertime-ms', hrend[1] / 1000000)
+  res.sendFile(filePath)
 });
 
-app.get('/', async (req, res) => {
-  await page.goto(`http://localhost:${process.env.PORT}${req.url}`);
 
-  const fileName = buildFilename(req._parsedUrl)
-  await page.screenshot({path: `snapshots/calendar${fileName}.png`});
-
-  // Todo: try/catch for err
-  // Todo: 301 to generated snapshot
-  res.send('Hello World!');
-});
-
+/**
+ * Server instantiation
+ * Opens an empty Puppeteer instance so that incoming requests
+ * don't have to start so cold.
+ **/
 const server = app.listen(process.env.API_PORT, async () => {
   browser = await puppeteer.launch(isDebugging())
   page = await browser.newPage();
@@ -124,7 +133,10 @@ const server = app.listen(process.env.API_PORT, async () => {
 });
 
 
-
+/**
+ * Ensure Chromium is closed and the process restarts cleanly
+ * for both user and nodemon exit signals
+ **/
 async function cleanup() {
   console.log('cleanup...')
   !!browser && await browser.close()
