@@ -2,6 +2,7 @@ import 'dotenv/config';
 import cors from 'cors';
 import express from 'express';
 
+const du = require('du')
 const fs = require('fs')
 const url = require('url')
 const path = require('path')
@@ -13,7 +14,8 @@ const expressWinston = require('express-winston')
 const expAutoSan = require('express-autosanitizer')
 
 // Globals
-const appTitle = 'React Calendar API'
+const APP_TITLE = 'React Calendar API'
+const REL_SNAP_DIR = '../snapshots'
 
 const isDebugging = () => {
   const debugging_mode = {
@@ -33,7 +35,7 @@ const logger = winston.createLogger({
   defaultMeta: { service: 'api' },
 });
 
-//
+
 // If we're not in production then log to the `console` with the format:
 // `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
 if (process.env.NODE_ENV !== 'production') {
@@ -61,6 +63,7 @@ app.use(expressWinston.logger({
   ignoreRoute: function (req, res) { return false; } // optional: allows to skip some log messages based on request and/or response
 }));
 
+
 /**
  * Stats URL
  * Shows resources consumed by the Puppeteer process
@@ -68,11 +71,31 @@ app.use(expressWinston.logger({
  *   curl http://localhost:3001/stats
  **/
 app.get('/stats', async (req, res) => {
-  const proc = browser.process()
-  const usage = await pidusage(proc.pid)
+  let puppeteerStats, snapDirSize, numSnapFiles
+  const absSnapPath = path.join(__dirname, REL_SNAP_DIR)
+
+  try{
+    const proc = browser.process()
+    puppeteerStats = await pidusage(proc.pid)
+    snapDirSize = await du(absSnapPath)
+
+    // Todo: also list file names? Maybe at a different endpoint...
+    const snapFiles = await fs.readdirSync(absSnapPath)
+    numSnapFiles = snapFiles.length
+  } catch(err){
+    logger.error('stats :: ', err)
+    res.status(500).send({message: 'Error collecting stats'})
+  }
+
+  const usage = {
+    puppeteerStats,
+    snapDirSize,
+    numSnapFiles
+  }
   logger.info(usage)
   res.json(usage)
 });
+
 
 /**
  * Builds a filename given a url.parse() object.
@@ -87,32 +110,38 @@ function buildFilename(parsedUrl){
   return fileName
 }
 
+function buildFilepath(parsedUrl){
+  const fileName = buildFilename(parsedUrl)
+  const filePath = path.join(__dirname, REL_SNAP_DIR, `calendar${fileName}.png`)
+  return filePath
+}
+
+
 /**
  * Raw image URL
  * Serves an image after translating GET params into a filename.
  **/
 app.get('/', async (req, res) => {
   const hrstart = process.hrtime()
-  const fileName = buildFilename(req._parsedUrl)
-  const filePath = path.join(__dirname, '../snapshots', `calendar${fileName}.png`)
+  const filePath = buildFilepath(req._parsedUrl)
 
-  try {
-    if (!fs.existsSync(filePath)) {
+  if (!fs.existsSync(filePath)) {
+    try {
       await page.goto(`http://localhost:${process.env.PORT}${req.url}`);
-      await page.screenshot({path: `snapshots/calendar${fileName}.png`});
+      await page.screenshot({path: filePath});
       logger.info(`Generating new snapshot: ${filePath}`)
+    } catch(err) {
+      logger.error('browser.newPage :: ', err)
+      res.status(500).send({message: 'Error connecting to upstream snapshot service'})
     }
-  } catch(err) {
-    logger.error('fs.existsSync', err)
-    res.status(500).send({message: 'Filesystem error 01'})
   }
 
   try {
     const stat = fs.statSync(filePath)
     res.set('X-RCA-birthtime', stat.birthtime)
   } catch(err) {
-    logger.error('fs.statSync', err)
-    res.status(500).send({message: 'Filesystem error 02'})
+    logger.error('fs.statSync :: ', err)
+    res.status(500).send({message: 'Error fetching file stats'})
   }
 
   const hrend = process.hrtime(hrstart)
