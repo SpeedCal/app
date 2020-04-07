@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import * as dateFns from "date-fns";
 import { useLocation, useHistory, withRouter } from 'react-router-dom';
 import queryString from 'query-string';
-
+import { IoIosAdd } from "react-icons/io";
+import Form from './Form';
 //import { logger } from "services/Logger";
 
 //function Calendar(){
@@ -15,9 +16,9 @@ const Calendar = ({ history }) => {
 
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(initialDate);
+  const [form, setForm] = useState(false);
 
-  
-  
+
   // const [search, setSearch] = useState(queryString.parse(rawLocation.search));
   // console.log(rawLocation)
   // console.log(search)
@@ -46,7 +47,7 @@ const Calendar = ({ history }) => {
     })
 
     setSelectedDate(day)
-    console.log('CLICK', day, date)
+    // console.log('CLICK', day, date)
   };
 
   const nextMonth = () => {
@@ -69,6 +70,7 @@ const Calendar = ({ history }) => {
         </div>
         <div className="col col-center">
           <span>{dateFns.format(currentMonth, dateFormat)}</span>
+          {/* <span><IoIosAdd className="add-event-button" size={25} onClick={makeEvent} />Add</span> */}
         </div>
         <div className="col col-end" onClick={nextMonth}>
           <div className="icon">chevron_right</div>
@@ -92,6 +94,26 @@ const Calendar = ({ history }) => {
     }
 
     return <div className="days row">{days}</div>;
+  }
+
+  const makeEvent = () => {
+    console.log("add event")
+    setForm(true);
+  }
+
+  const closeForm = (event) => {
+    setForm(false);
+    console.log('meow', event)
+    if(event){
+      const newState = Object.assign({}, history.state, {
+        events: [event]
+      })
+
+      history.push({
+        search: '?' + queryString.stringify(newState),
+        state: newState
+      })
+    }
   }
 
   const renderCells = () => {
@@ -121,12 +143,13 @@ const Calendar = ({ history }) => {
               !dateFns.isSameMonth(day, monthStart)
                 ? "disabled"
                 : dateFns.isSameDay(day, selectedDate) ? "selected" : ""
-            }`}
+              }`}
             key={day}
             onClick={() => onDateClick(dateFns.format(cloneDay, 'yyyy-MM-dd'))}
           >
             <span className="number">{formattedDate}</span>
             <span className="bg">{formattedDate}</span>
+            {form ? null : <span><IoIosAdd className="add-event-button" size={25} onClick={makeEvent} /></span>}
           </div>
         );
         day = dateFns.addDays(day, 1);
@@ -144,6 +167,7 @@ const Calendar = ({ history }) => {
   return (
     <div className="calendar">
       {renderHeader()}
+      {form ? <Form closeForm={closeForm} /> : null}
       {renderDays()}
       {renderCells()}
     </div>
