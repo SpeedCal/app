@@ -99,11 +99,21 @@ const Calendar = ({ history }) => {
   const makeEvent = () => {
     console.log("add event")
     setForm(true);
-
   }
 
-  const closeForm = () => {
+  const closeForm = (event) => {
     setForm(false);
+    console.log('meow', event)
+    if(event){
+      const newState = Object.assign({}, history.state, {
+        events: [event]
+      })
+
+      history.push({
+        search: '?' + queryString.stringify(newState),
+        state: newState
+      })
+    }
   }
 
   const renderCells = () => {

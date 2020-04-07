@@ -2,6 +2,8 @@ import React, { Component, useState, useEffect } from "react";
 // import closeForm from './Calendar';
 import DatePicker from 'react-datepicker';
 import { Button, FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
+import "react-datepicker/dist/react-datepicker.css";
+
 
 export default function Form(props) {
   const { closeForm } = props;
@@ -14,7 +16,9 @@ export default function Form(props) {
     console.log('title: ', title)
     console.log('start date: ', startDate)
     console.log('end date: ', endDate)
-    closeForm();
+    const newEvent = {title, startDate, endDate}
+    console.log(newEvent)
+    closeForm(newEvent);
   }
   const cancelEvent = () => {
     console.log('cancel')
