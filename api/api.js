@@ -16,6 +16,7 @@ const expAutoSan = require('express-autosanitizer')
 // Globals
 const APP_TITLE = 'React Calendar API'
 const REL_SNAP_DIR = '../snapshots'
+const ABS_SNAP_DIR = path.join(__dirname, REL_SNAP_DIR)
 
 const isDebugging = () => {
   const debugging_mode = {
@@ -72,15 +73,14 @@ app.use(expressWinston.logger({
  **/
 app.get('/stats', async (req, res) => {
   let puppeteerStats, snapDirSize, numSnapFiles
-  const absSnapPath = path.join(__dirname, REL_SNAP_DIR)
 
   try{
     const proc = browser.process()
     puppeteerStats = await pidusage(proc.pid)
-    snapDirSize = await du(absSnapPath)
+    snapDirSize = await du(ABS_SNAP_DIR)
 
     // Todo: also list file names? Maybe at a different endpoint...
-    const snapFiles = await fs.readdirSync(absSnapPath)
+    const snapFiles = await fs.readdirSync(ABS_SNAP_DIR)
     numSnapFiles = snapFiles.length
   } catch(err){
     logger.error('stats :: ', err)
@@ -132,7 +132,7 @@ app.get('/', async (req, res) => {
       logger.info(`Generating new snapshot: ${filePath}`)
     } catch(err) {
       logger.error('browser.newPage :: ', err)
-      res.status(500).send({message: 'Error connecting to upstream snapshot service'})
+      return res.status(500).send({message: 'Error connecting to upstream snapshot service'})
     }
   }
 
@@ -141,14 +141,31 @@ app.get('/', async (req, res) => {
     res.set('X-RCA-birthtime', stat.birthtime)
   } catch(err) {
     logger.error('fs.statSync :: ', err)
-    res.status(500).send({message: 'Error fetching file stats'})
+    return res.status(500).send({message: 'Error fetching file stats'})
   }
 
   const hrend = process.hrtime(hrstart)
   res.set('X-RCA-rendertime-ms', hrend[1] / 1000000)
-  res.sendFile(filePath)
+  return res.sendFile(filePath)
 });
 
+
+/**
+ * System startup tests
+ * Ensure the environment is suitable for operating within.
+ **/
+function testSystem(){
+  let success = true;
+
+  try {
+    fs.accessSync(ABS_SNAP_DIR, fs.constants.R_OK | fs.constants.W_OK)
+  } catch(err){
+    logger.error(`testSystem read/write error: ensure directory exists: ${ABS_SNAP_DIR}`)
+    success = false
+  }
+
+  return success
+}
 
 /**
  * Server instantiation
@@ -156,6 +173,11 @@ app.get('/', async (req, res) => {
  * don't have to start so cold.
  **/
 const server = app.listen(process.env.API_PORT, async () => {
+  if(!testSystem()){
+    logger.error('Startup failure')
+    process.exit()
+  }
+
   browser = await puppeteer.launch(isDebugging())
   page = await browser.newPage();
   logger.info(`API listening on http://localhost:${process.env.API_PORT}`)
