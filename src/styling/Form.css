@@ -15,3 +15,7 @@
   display: flex;
   justify-content: space-between;
 }
+
+.event-strip {
+  background-color: aqua;
+}

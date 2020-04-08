@@ -17,7 +17,8 @@ const Calendar = ({ history }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(initialDate);
   const [form, setForm] = useState(false);
-
+  const [eventDates, setEventDates] = useState([])
+  const [eventTitle, setEventTitle] = useState('')
 
   // const [search, setSearch] = useState(queryString.parse(rawLocation.search));
   // console.log(rawLocation)
@@ -123,7 +124,8 @@ const Calendar = ({ history }) => {
           datesOfEvent.push(startDate + i);
         }
       }
-
+      setEventDates(datesOfEvent);
+      setEventTitle(event.title);
       console.log('dates of event: ', datesOfEvent)
     }
   }
@@ -144,7 +146,10 @@ const Calendar = ({ history }) => {
     while (day <= endDate) {
       for (let i = 0; i < 7; i++) {
         formattedDate = dateFns.format(day, dateFormat);
-
+        console.log('formattedDate: ', formattedDate, typeof formattedDate)
+        console.log('eventDates: ', eventDates)
+        console.log(typeof eventDates[1])
+        console.log('i: ', i)
         // This is gross - I think this works because `const` prevents further mutation.
         // If the onClick() fn uses `day` the selected class never moves...
         const cloneDay = day;
@@ -162,6 +167,13 @@ const Calendar = ({ history }) => {
             <span className="number">{formattedDate}</span>
             <span className="bg">{formattedDate}</span>
             {form ? null : <span><IoIosAdd className="add-event-button" size={25} onClick={makeEvent} /></span>}
+            {/* {eventDates.includes(Number(formattedDate)) ? <div>{eventTitle}</div> : null} */}
+            {!eventDates.includes(Number(formattedDate))
+              ? null
+              : (Number(formattedDate) === eventDates[0])
+                ? <div className="event-strip">{eventTitle}</div>
+                : <div className="event-strip">&nbsp;</div>
+            }
           </div>
         );
         day = dateFns.addDays(day, 1);
