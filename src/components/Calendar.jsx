@@ -71,7 +71,6 @@ const Calendar = ({ history }) => {
         </div>
         <div className="col col-center">
           <span>{dateFns.format(currentMonth, dateFormat)}</span>
-          {/* <span><IoIosAdd className="add-event-button" size={25} onClick={makeEvent} />Add</span> */}
         </div>
         <div className="col col-end" onClick={nextMonth}>
           <div className="icon">chevron_right</div>
@@ -98,13 +97,11 @@ const Calendar = ({ history }) => {
   }
 
   const makeEvent = () => {
-    console.log("add event")
     setForm(true);
   }
 
   const closeForm = (event) => {
     setForm(false);
-    console.log('meow', event)
     if (event) {
       const newState = Object.assign({}, history.state, {
         events: [event]
@@ -114,10 +111,10 @@ const Calendar = ({ history }) => {
         search: '?' + queryString.stringify(newState),
         state: newState
       })
+
       let startDate = dateFns.getDate(event.startDate); //pulls off day of the month from startDate obj.
       let numDays = Math.round((event.endDate - event.startDate) / 86400000); //number of milliseconds in a day.
       let datesOfEvent = [startDate];
-
 
       if (numDays > 0) {
         for (let i = 1; i <= numDays; i++) {
@@ -126,7 +123,6 @@ const Calendar = ({ history }) => {
       }
       setEventDates(datesOfEvent);
       setEventTitle(event.title);
-      console.log('dates of event: ', datesOfEvent)
     }
   }
 
@@ -146,10 +142,6 @@ const Calendar = ({ history }) => {
     while (day <= endDate) {
       for (let i = 0; i < 7; i++) {
         formattedDate = dateFns.format(day, dateFormat);
-        console.log('formattedDate: ', formattedDate, typeof formattedDate)
-        console.log('eventDates: ', eventDates)
-        console.log(typeof eventDates[1])
-        console.log('i: ', i)
         // This is gross - I think this works because `const` prevents further mutation.
         // If the onClick() fn uses `day` the selected class never moves...
         const cloneDay = day;
@@ -167,7 +159,8 @@ const Calendar = ({ history }) => {
             <span className="number">{formattedDate}</span>
             <span className="bg">{formattedDate}</span>
             {form ? null : <span><IoIosAdd className="add-event-button" size={25} onClick={makeEvent} /></span>}
-            {/* {eventDates.includes(Number(formattedDate)) ? <div>{eventTitle}</div> : null} */}
+            {/* Chained ternary checks if the current date being rendered is a member of the eventDates array, if 
+            not then null. Otherwise insert the event stripe and only put the title if it's the fisrt date of the event. */}
             {!eventDates.includes(Number(formattedDate))
               ? null
               : (Number(formattedDate) === eventDates[0])

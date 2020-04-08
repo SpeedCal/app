@@ -1,10 +1,7 @@
 import React, { useState } from "react";
-// import closeForm from './Calendar';
 import DatePicker from 'react-datepicker';
 import { Button, FormGroup, FormControl, ControlLabel, Alert } from 'react-bootstrap';
 import "react-datepicker/dist/react-datepicker.css";
-// import { Alert } from 'reactstrap';
-
 
 export default function Form(props) {
   const { closeForm } = props;
@@ -14,13 +11,9 @@ export default function Form(props) {
   const [dateError, setDateError] = useState(false);
 
   const saveEvent = () => {
-    console.log('save')
-    // console.log('title: ', title)
-    // console.log('start date: ', startDate)
-    // console.log('end date: ', endDate)
     const newEvent = { title, startDate, endDate }
-    console.log(newEvent)
 
+    //check for date error
     if (startDate > endDate) {
       setDateError(true);
     } else {
