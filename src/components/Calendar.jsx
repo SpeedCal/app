@@ -115,7 +115,16 @@ const Calendar = ({ history }) => {
       })
       let startDate = dateFns.getDate(event.startDate); //pulls off day of the month from startDate obj.
       let numDays = Math.round((event.endDate - event.startDate) / 86400000); //number of milliseconds in a day.
+      let datesOfEvent = [startDate];
 
+
+      if (numDays > 0) {
+        for (let i = 1; i <= numDays; i++) {
+          datesOfEvent.push(startDate + i);
+        }
+      }
+
+      console.log('dates of event: ', datesOfEvent)
     }
   }
 
