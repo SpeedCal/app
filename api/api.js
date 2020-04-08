@@ -26,6 +26,9 @@ const browser = require('./browser')
 const slash = require('./slash.route')
 const stats = require('./stats.route')
 
+
+
+
 /**
  * Server instantiation
  * Opens an empty Puppeteer instance so that incoming requests
@@ -39,7 +42,7 @@ const listener = async () => {
     process.exit()
   }
 
-  browser.init()
+  await browser.init()
   logger.info(`NODE_ENV = ${config.NODE_ENV}`)
   logger.info(`API listening on http://localhost:${config.API_PORT}`)
 
