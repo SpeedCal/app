@@ -22,30 +22,21 @@ export default function Form(props) {
     console.log(newEvent)
 
     if (startDate > endDate) {
-      console.log('start date greater than endDate')
-      console.log('dateError: ', dateError)
       setDateError(true);
-
     } else {
-      console.log('start date equal endDate')
       setDateError(false);
       closeForm(newEvent);
     }
-    console.log('dateError: ', dateError)
-
   }
+
   const cancelEvent = () => {
     console.log('cancel')
-    console.log('dateError: ', dateError)
-
     setDateError(false);
-    console.log('dateError: ', dateError)
-
     closeForm();
   }
 
   return (
-    <div>
+    <div className="event-form-container">
       <div className="form-element">
         <form >
           <FormGroup controlId='title' bsSize='large'>
@@ -58,15 +49,18 @@ export default function Form(props) {
               onChange={e => setTitle(e.target.value)}
             />
           </FormGroup>
-          <ControlLabel>Start Date: </ControlLabel><DatePicker selected={startDate} onChange={date => setStartDate(date)} />
-          <ControlLabel>End Date: </ControlLabel><DatePicker selected={endDate} onChange={date => setEndDate(date)} />
-          <Button onClick={saveEvent} color="primary">Save</Button>
-          <Button onClick={cancelEvent} color="secondary">Cancel</Button>
+          <div className="dates-buttons">
+            <div><ControlLabel>Start Date:</ControlLabel>{' '}<DatePicker selected={startDate} onChange={date => setStartDate(date)} /></div>
+            <div><ControlLabel>End Date:</ControlLabel>{' '}<DatePicker selected={endDate} onChange={date => setEndDate(date)} />{' '}</div>
+            <div>
+              <Button onClick={saveEvent} variant="primary" className="btn-primary">Save</Button>{' '}
+              <Button onClick={cancelEvent} variant="secondary" className="btn-secondary">Cancel</Button>
+            </div>
+          </div>
         </form>
       </div>
-      {dateError ? <Alert color="danger">Start date must be equal to or before the end date.</Alert> : null}
+      {dateError ? <Alert className="alert-danger">Start date must be equal to or before the end date.</Alert> : null}
     </div>
   )
-
 }
 
