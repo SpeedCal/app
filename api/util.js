@@ -5,10 +5,14 @@
  **/
 
 const fs = require('fs')
+const url = require('url')
 const path = require('path')
 const winston = require('winston')
 const expressWinston = require('express-winston')
 const config = require('./env').config()
+
+exports.isProduction = () => process.env.NODE_ENV === 'production'
+exports.isDebug = () => process.env.NODE_ENV === 'debug'
 
 /**
  * Debugging indicator
@@ -20,7 +24,7 @@ exports.isDebugging = () => {
     slowMo: 250,
     devtools: true,
   }
-  return process.env.NODE_ENV === 'debug' ? debugging_mode : {}
+  return exports.isDebug() ? debugging_mode : {}
 }
 
 /**
@@ -64,7 +68,6 @@ exports.createExpressLogger = () => {
     msg: "HTTP {{req.method}} {{req.url}} {{req.headers}} {{req.connection}}", // optional: customize the default logging message. E.g. "{{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"
     expressFormat: true, // Use the default Express/morgan request formatting. Enabling this will override any msg if true. Will only output colors with colorize set to true
     colorize: false, // Color the text and status code, using the Express/morgan color palette (text: gray, status: default green, 3XX cyan, 4XX yellow, 5XX red).
-    ignoreRoute: function (req, res) { return false; } // optional: allows to skip some log messages based on request and/or response
   })
 }
 
@@ -75,6 +78,9 @@ exports.createExpressLogger = () => {
  * would obfuscate filenames and make development a bit harder.
  **/
 exports.buildFilename = (parsedUrl) => {
+  if(!(parsedUrl instanceof url.Url)){
+    throw new Error('Unexpected parsedUrl object')
+  }
   const parsedPath = path.parse(parsedUrl.pathname)
   const parsedQuery = parsedUrl.query.replace(/=/gi, '_')
   const fileName = `${parsedPath.name}-${parsedQuery}${parsedPath.ext}`
@@ -82,8 +88,13 @@ exports.buildFilename = (parsedUrl) => {
 }
 
 exports.buildFilepath = (parsedUrl) => {
+  if(!(parsedUrl instanceof url.Url)){
+    throw new Error('Unexpected parsedUrl object')
+  }
+  // Hard-setting the URL path for now, maybe open it up in the future
+  parsedUrl.pathname = 'calendar.png'
   const fileName = exports.buildFilename(parsedUrl)
-  const filePath = path.join(__dirname, config.REL_SNAP_DIR, `calendar${fileName}.png`)
+  const filePath = path.join(__dirname, config.REL_SNAP_DIR, fileName)
   return filePath
 }
 
@@ -99,18 +110,7 @@ exports.testSystem = () => {
     fs.accessSync(config.ABS_SNAP_DIR, fs.constants.R_OK | fs.constants.W_OK)
   } catch(err){
     throw new Error(`testSystem read/write error: ensure directory exists: ${config.ABS_SNAP_DIR}`)
-    success = false
   }
 
   return success
-}
-
-/**
- * Process cleanup
- * Ensures the Puppeteer browser is terminated
- * regardless of how the process exits (eg. user vs nodemon)
- **/
-exports.cleanup = async(browser, server) => {
-  !!browser && await browser.close()
-  server.close(() => process.kill(process.pid, 'SIGUSR2'))
 }
