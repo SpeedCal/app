@@ -8,6 +8,7 @@
 # testing
 /coverage
 /snapshots
+.nyc_output
 
 # production
 /build
