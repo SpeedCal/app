@@ -104,7 +104,7 @@ const Calendar = ({ history }) => {
   const closeForm = (event) => {
     setForm(false);
     console.log('meow', event)
-    if(event){
+    if (event) {
       const newState = Object.assign({}, history.state, {
         events: [event]
       })
@@ -166,8 +166,8 @@ const Calendar = ({ history }) => {
 
   return (
     <div className="calendar">
-      {renderHeader()}
       {form ? <Form closeForm={closeForm} /> : null}
+      {renderHeader()}
       {renderDays()}
       {renderCells()}
     </div>
