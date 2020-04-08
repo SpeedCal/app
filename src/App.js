@@ -9,7 +9,8 @@ import {
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Calendar from "components/Calendar";
 //import Image from "components/Image";
-import "./App.css";
+import "./styling/App.css";
+import "./styling/Form.css";
 
 class App extends React.Component {
   render() {
