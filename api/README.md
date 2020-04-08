@@ -14,10 +14,7 @@ Make requests:
 
 ```
 # Generate snap, store in ../snapshots/image.png
-curl http://localhost:3001/
-
-# Render existing snapshot
-curl http://localhost:3001/calendar.png
+curl http://localhost:3001/?selected=2020-04-21
 
 # View system stats about the process (`| jq` for nice presentation)
 curl http://localhost:3001/stats
