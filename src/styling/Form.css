@@ -1,9 +1,5 @@
-.add-event-button {
-  opacity: 20%;
-}
-.add-event-button:hover {
-  opacity: 100%;
-}
+.col.cell .add-event-button { opacity: 0; }
+.col.cell:hover .add-event-button { opacity: 100; }
 
 .event-form-container {
   width: 95%;
@@ -26,4 +22,5 @@
   padding-bottom: 5px;
   width: 100%;
   overflow: hidden;
+  z-index: 100;
 }
