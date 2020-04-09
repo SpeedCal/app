@@ -164,8 +164,8 @@ const Calendar = ({ history }) => {
             {!eventDates.includes(Number(formattedDate))
               ? null
               : (Number(formattedDate) === eventDates[0])
-                ? <div className="event-strip">{eventTitle}</div>
-                : <div className="event-strip">&nbsp;</div>
+                ? <div className="event-stripe">{eventTitle}</div>
+                : <div className="event-stripe">&nbsp;</div>
             }
           </div>
         );
