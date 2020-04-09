@@ -5,6 +5,8 @@ import queryString from 'query-string';
 import { IoIosAdd } from "react-icons/io";
 import Form from './Form';
 //import { logger } from "services/Logger";
+import makeArrayOfDateStr from '../helpers/makeArrayOfDateStr'
+import makeDateStrFromDateObj from '../helpers/makeDateStrFromDateObj'
 
 //function Calendar(){
 const Calendar = ({ history }) => {
@@ -121,17 +123,19 @@ const Calendar = ({ history }) => {
         search: '?' + queryString.stringify(newState),
         state: newState
       })
+      // console.log('event: ', event)
+      // let startDate = dateFns.getDayOfYear(event.startDate); //pulls off day of the month from startDate obj.
+      // console.log('startDate: ', startDate)
+      // let numDays = Math.round((event.endDate - event.startDate) / 86400000); //number of milliseconds in a day.
+      // let datesOfEvent = [startDate];
 
-      let startDate = dateFns.getDate(event.startDate); //pulls off day of the month from startDate obj.
-      let numDays = Math.round((event.endDate - event.startDate) / 86400000); //number of milliseconds in a day.
-      let datesOfEvent = [startDate];
+      let result = dateFns.eachDayOfInterval({
+        start: event.startDate,
+        end: event.endDate
+      })
+      let dateStrArray = makeArrayOfDateStr(result)
 
-      if (numDays > 0) {
-        for (let i = 1; i <= numDays; i++) {
-          datesOfEvent.push(startDate + i);
-        }
-      }
-      setEventDates(datesOfEvent);
+      setEventDates(dateStrArray);
       setEventTitle(event.title);
     }
   }
@@ -148,10 +152,13 @@ const Calendar = ({ history }) => {
     let days = [];
     let day = startDate;
     let formattedDate = "";
+    let currentDateString = "";
 
     while (day <= endDate) {
       for (let i = 0; i < 7; i++) {
         formattedDate = dateFns.format(day, dateFormat);
+        currentDateString = makeDateStrFromDateObj(day)
+
         // This is gross - I think this works because `const` prevents further mutation.
         // If the onClick() fn uses `day` the selected class never moves...
         const cloneDay = day;
@@ -171,9 +178,9 @@ const Calendar = ({ history }) => {
             {form ? null : <span><IoIosAdd className="add-event-button" size={25} onClick={makeEvent} /></span>}
             {/* Chained ternary checks if the current date being rendered is a member of the eventDates array, if 
             not then null. Otherwise insert the event stripe and only put the title if it's the fisrt date of the event. */}
-            {!eventDates.includes(Number(formattedDate))
+            {!eventDates.includes(currentDateString)
               ? null
-              : (Number(formattedDate) === eventDates[0])
+              : (currentDateString === eventDates[0])
                 ? <div className="event-stripe" onClick={editEvent}>{eventTitle}</div>
                 : <div className="event-stripe">&nbsp;</div>
             }
