@@ -17,6 +17,7 @@ const Calendar = ({ history }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(initialDate);
   const [form, setForm] = useState(false);
+  const [edit, setEdit] = useState(false);
   const [eventDates, setEventDates] = useState([])
   const [eventTitle, setEventTitle] = useState('')
 
@@ -99,10 +100,19 @@ const Calendar = ({ history }) => {
   const makeEvent = () => {
     setForm(true);
   }
+  const editEvent = () => {
+    console.log('edit')
+    setEdit(true);
+  }
 
   const closeForm = (event) => {
     setForm(false);
-    if (event) {
+    setEdit(false);
+    if (event === "DELETE") {
+      setEventDates([]);
+      setEventTitle('');
+    } else if (event) {
+
       const newState = Object.assign({}, history.state, {
         events: [event]
       })
@@ -164,7 +174,7 @@ const Calendar = ({ history }) => {
             {!eventDates.includes(Number(formattedDate))
               ? null
               : (Number(formattedDate) === eventDates[0])
-                ? <div className="event-stripe">{eventTitle}</div>
+                ? <div className="event-stripe" onClick={editEvent}>{eventTitle}</div>
                 : <div className="event-stripe">&nbsp;</div>
             }
           </div>
@@ -184,6 +194,7 @@ const Calendar = ({ history }) => {
   return (
     <div className="calendar">
       {form ? <Form closeForm={closeForm} /> : null}
+      {edit ? <Form closeForm={closeForm} edit={edit} /> : null}
       {renderHeader()}
       {renderDays()}
       {renderCells()}
