@@ -15,23 +15,11 @@ exports.route = async (req, res) => {
   const filePath = util.buildFilepath(req._parsedUrl)
 
   if (!fs.existsSync(filePath)) {
-    try {
-      await browser.getPage().goto(`http://localhost:${config.PORT}${req.url}`);
-      await browser.getPage().screenshot({path: filePath});
-      logger.info(`Generating new snapshot: ${filePath}`)
-    } catch(err) {
-      logger.error('browser.newPage :: ', err)
-      return res.status(500).send({message: 'Error connecting to upstream snapshot service'})
-    }
+    const url = `${config.APP_URL}:${config.PORT}${req.url}`
+    await browser.storeSnapshot(url, filePath)
   }
 
-  try {
-    const stat = fs.statSync(filePath)
-    res.set('X-RCA-birthtime', stat.birthtime)
-  } catch(err) {
-    logger.error('fs.statSync :: ', err)
-    return res.status(500).send({message: 'Error fetching file stats'})
-  }
+  res.set('X-RCA-birthtime', util.getFileBirthtime(filePath))
 
   const hrend = process.hrtime(hrstart)
   res.set('X-RCA-rendertime-ms', hrend[1] / 1000000)

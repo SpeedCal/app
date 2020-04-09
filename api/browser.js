@@ -3,6 +3,8 @@ const puppeteer = require('puppeteer')
 const pidusage = require('pidusage')
 
 const util = require('./util')
+const config = require('./env').config()
+const logger = util.createLogger('browser')
 
 class Browser {
   constructor(){
@@ -32,6 +34,17 @@ class Browser {
 
   getPage(){
     return this.page
+  }
+
+  async storeSnapshot(url, filePath){
+    try {
+      await this.getPage().goto(url);
+      await this.getPage().screenshot({path: filePath});
+      logger.info(`Generating new snapshot: ${filePath}`)
+    } catch(err) {
+      logger.error('browser.storeSnapshot :: ', err)
+    }
+    
   }
 }
 

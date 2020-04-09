@@ -5,10 +5,13 @@
  **/
 
 const fs = require('fs')
+const du = require('du')
 const url = require('url')
 const path = require('path')
 const winston = require('winston')
+const childProcess = require('child_process')
 const expressWinston = require('express-winston')
+
 const config = require('./env').config()
 
 exports.isProduction = () => process.env.NODE_ENV === 'production'
@@ -113,4 +116,33 @@ exports.testSystem = () => {
   }
 
   return success
+}
+
+
+exports.getFileBirthtime = (filePath) => {
+  let birthTime = null
+
+  try {
+    const stat = fs.statSync(filePath)
+    birthTime = stat.birthtime
+  } catch(err) {
+    console.error('meow getFileBirth', err)
+    //throw new Error(err)
+  }
+
+  return birthTime
+}
+
+exports.du = async (sysPath) => {
+  // Todo: figure out how to mock du()
+  let stats = null
+
+  try {
+    stats = du(sysPath)
+  } catch(err){
+    //throw new Error(err)
+    console.error('meow du', err)
+  }
+
+  return stats
 }

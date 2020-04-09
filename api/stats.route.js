@@ -1,6 +1,4 @@
 const fs = require('fs')
-const du = require('du')
-const pidusage = require('pidusage')
 
 const util = require('./util')
 const config = require('./env').config()
@@ -15,18 +13,12 @@ const logger = util.createLogger('stats.route')
  **/
 exports.route = async (req, res) => {
   let puppeteerStats, snapDirSize, numSnapFiles
+  puppeteerStats = await browser.stats()
+  snapDirSize = await util.du(config.ABS_SNAP_DIR)
 
-  try{
-    puppeteerStats = await browser.stats()
-    snapDirSize = await du(config.ABS_SNAP_DIR)
-
-    // Todo: also list file names? Maybe at a different endpoint...
-    const snapFiles = await fs.readdirSync(config.ABS_SNAP_DIR)
-    numSnapFiles = snapFiles.length
-  } catch(err){
-    logger.error('stats :: ', err)
-    res.status(500).send({message: 'Error collecting stats'})
-  }
+  // Todo: also list file names? Maybe at a different endpoint...
+  const snapFiles = await fs.readdirSync(config.ABS_SNAP_DIR)
+  numSnapFiles = snapFiles.length
 
   const usage = {
     puppeteerStats,

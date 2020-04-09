@@ -8,26 +8,24 @@ const pidusage = require('pidusage')
 const puppeteer = require('puppeteer')
 const handlebars = require('handlebars')
 const expAutoSan = require('express-autosanitizer')
+require('express-async-errors')
 
 // Locals
 const config = require('./env').config()
 const util = require('./util')
+const error = require('./error')
+const browser = require('./browser')
+const slash = require('./slash.route')
+const stats = require('./stats.route')
 const logger = util.createLogger()
 const expressLogger = util.createExpressLogger()
 
 // Instantiation
-//let browser, page;
+const router = express.Router();
 const app = express();
 app.use(cors());
 app.use(expAutoSan.all)
 app.use(expressLogger);
-
-const browser = require('./browser')
-const slash = require('./slash.route')
-const stats = require('./stats.route')
-
-
-
 
 /**
  * Server instantiation
@@ -47,10 +45,22 @@ const listener = async () => {
   logger.info(`API listening on http://localhost:${config.API_PORT}`)
 
   // Public routes:
-  app.get('/', slash.route)
-  app.get('/stats', stats.route);
+  //app.get('/', slash.route)
+  //app.get('/stats', stats.route);
+  router.get('/', slash.route)
+  app.use('/', router);
+
+  router.get('/stats', stats.route);
+  app.use('/stats', router);
+
+  //General error handler
+  app.use(error.handler);
 }
+
+
+
 const server = app.listen(config.API_PORT, async () => listener())
+
 
 /**
  * Ensure Chromium is closed and the process restarts cleanly
