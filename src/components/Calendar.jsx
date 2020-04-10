@@ -18,7 +18,6 @@ const Calendar = ({ history }) => {
 
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(initialDate);
-  // const [form, setForm] = useState(false);
   const [edit, setEdit] = useState(false);
   const [eventDates, setEventDates] = useState([])
   const [eventTitle, setEventTitle] = useState('')
@@ -102,16 +101,12 @@ const Calendar = ({ history }) => {
     return <div className="days row">{days}</div>;
   }
 
-  // const makeEvent = () => {
-  //   setForm(true);
-  // }
   const editEvent = () => {
     console.log('edit')
     setEdit(true);
   }
 
   const closeForm = (event) => {
-    // setForm(false);
     setEdit(false);
     console.log('close form event: ', event)
     if (event === "DELETE") {
