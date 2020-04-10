@@ -4,12 +4,19 @@ import { Button, FormGroup, FormControl, ControlLabel, Alert } from 'react-boots
 import "react-datepicker/dist/react-datepicker.css";
 
 export default function Form(props) {
-  // console.log('props: ', props)
-  const { closeForm, edit } = props;
+  const { closeForm, event } = props;
 
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
-  const [title, setTitle] = useState(props.title || '');
+  const defaultEvent = {
+    startDate: new Date(),
+    endDate: new Date(),
+    title: ''
+  }
+
+  let currentEvent = Object.assign({}, defaultEvent, event);
+
+  const [startDate, setStartDate] = useState(currentEvent.startDate);
+  const [endDate, setEndDate] = useState(currentEvent.endDate);
+  const [title, setTitle] = useState(currentEvent.title);
   const [dateError, setDateError] = useState(false);
 
   const saveEvent = () => {
@@ -55,7 +62,7 @@ export default function Form(props) {
             <div>
               <Button onClick={saveEvent} variant="primary" className="btn-primary">Save</Button>{' '}
               <Button onClick={cancelEvent} variant="secondary" className="btn-secondary">Cancel</Button>{' '}
-              {edit ? <Button onClick={deleteEvent} variant="secondary" className="btn-danger">Delete</Button> : null}
+              {event ? <Button onClick={deleteEvent} variant="secondary" className="btn-danger">Delete</Button> : null}
             </div>
           </div>
         </form>

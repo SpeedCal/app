@@ -18,10 +18,12 @@ const Calendar = ({ history }) => {
 
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(initialDate);
-  const [form, setForm] = useState(false);
   const [edit, setEdit] = useState(false);
   const [eventDates, setEventDates] = useState([])
   const [eventTitle, setEventTitle] = useState('')
+  const [event, setEvent] = useState(null);
+  // const [eventEnd, setEventEnd] = useState(null);
+  // const [eventStart, setEventStart] = useState(null);
 
   // const [search, setSearch] = useState(queryString.parse(rawLocation.search));
   // console.log(rawLocation)
@@ -99,20 +101,19 @@ const Calendar = ({ history }) => {
     return <div className="days row">{days}</div>;
   }
 
-  const makeEvent = () => {
-    setForm(true);
-  }
   const editEvent = () => {
     console.log('edit')
     setEdit(true);
   }
 
   const closeForm = (event) => {
-    setForm(false);
     setEdit(false);
+    console.log('close form event: ', event)
     if (event === "DELETE") {
       setEventDates([]);
       setEventTitle('');
+      setEvent(null);
+
     } else if (event) {
 
       const newState = Object.assign({}, history.state, {
@@ -134,6 +135,7 @@ const Calendar = ({ history }) => {
         end: event.endDate
       })
       let dateStrArray = makeArrayOfDateStr(result)
+      setEvent(event);
 
       setEventDates(dateStrArray);
       setEventTitle(event.title);
@@ -174,15 +176,15 @@ const Calendar = ({ history }) => {
             onClick={() => onDateClick(dateFns.format(cloneDay, 'yyyy-MM-dd'))}
           >
             <span className="number">{formattedDate}</span>
-            <span className="bg">{formattedDate}</span>
-            {form ? null : <span><IoIosAdd className="add-event-button" size={25} onClick={makeEvent} /></span>}
+            {/* <span className="bg">{formattedDate}</span> */}
+            {edit ? null : <span><IoIosAdd className="add-event-button" size={25} onClick={editEvent} /></span>}
             {/* Chained ternary checks if the current date being rendered is a member of the eventDates array, if 
             not then null. Otherwise insert the event stripe and only put the title if it's the fisrt date of the event. */}
             {!eventDates.includes(currentDateString)
               ? null
               : (currentDateString === eventDates[0])
                 ? <div className="event-stripe" onClick={editEvent}>{eventTitle}</div>
-                : <div className="event-stripe">&nbsp;</div>
+                : <div className="event-stripe" onClick={editEvent}>&nbsp;</div>
             }
           </div>
         );
@@ -200,8 +202,7 @@ const Calendar = ({ history }) => {
 
   return (
     <div className="calendar">
-      {form ? <Form closeForm={closeForm} /> : null}
-      {edit ? <Form closeForm={closeForm} edit={edit} /> : null}
+      {edit ? <Form closeForm={closeForm} event={event} /> : null}
       {renderHeader()}
       {renderDays()}
       {renderCells()}
