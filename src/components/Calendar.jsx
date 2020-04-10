@@ -116,14 +116,14 @@ const Calendar = ({ history }) => {
 
     } else if (event) {
 
-      const newState = Object.assign({}, history.state, {
-        events: [event]
-      })
+      // const newState = Object.assign({}, history.state, {
+      //   events: [event]
+      // })
 
-      history.push({
-        search: '?' + queryString.stringify(newState),
-        state: newState
-      })
+      // history.push({
+      //   search: '?' + queryString.stringify(newState),
+      //   state: newState
+      // })
       // console.log('event: ', event)
       // let startDate = dateFns.getDayOfYear(event.startDate); //pulls off day of the month from startDate obj.
       // console.log('startDate: ', startDate)
@@ -139,6 +139,15 @@ const Calendar = ({ history }) => {
 
       setEventDates(dateStrArray);
       setEventTitle(event.title);
+
+      const newState = Object.assign({}, history.state, {
+        title: event.title,
+        events: dateStrArray
+      })
+      history.push({
+        search: '?' + queryString.stringify(newState),
+        state: newState
+      })
     }
   }
 
