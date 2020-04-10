@@ -40,7 +40,9 @@
     "api:debug": "NODE_ENV=debug npm run api",
     "api:test": "mocha test/api/*.spec.js",
     "api:coverage": "nyc --reporter=html --reporter=text npm run api:test",
-    "api:test:watch": "nodemon --watch test --watch api --exec npm run api:coverage"
+    "api:test:watch": "nodemon --watch test --watch api --exec npm run api:coverage",
+    "api:docker": "docker run -d api",
+    "api:docker:build": "docker build -f docker/api/Dockerfile -t api ."
   },
   "eslintConfig": {
     "extends": "react-app"

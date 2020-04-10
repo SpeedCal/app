@@ -6,7 +6,6 @@ const cors = require('cors')
 const express = require('express')
 const pidusage = require('pidusage')
 const puppeteer = require('puppeteer')
-const handlebars = require('handlebars')
 const expAutoSan = require('express-autosanitizer')
 require('express-async-errors')
 
