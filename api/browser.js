@@ -4,13 +4,13 @@ const pidusage = require('pidusage')
 
 const util = require('./util')
 const config = require('./env').config()
-const logger = util.createLogger('browser')
 
 class Browser {
   constructor(){
     this.instance = null
     this.page = null
     this.pidusage = pidusage
+    this.logger = util.createLogger('browser')
   }
 
   async init(){
@@ -40,11 +40,11 @@ class Browser {
     try {
       await this.getPage().goto(url);
       await this.getPage().screenshot({path: filePath});
-      logger.info(`Generating new snapshot: ${filePath}`)
+      this.logger.info(`Generating new snapshot: ${filePath}`)
     } catch(err) {
-      logger.error('browser.storeSnapshot :: ', err)
+      this.logger.error('browser.storeSnapshot :: ', err)
+      throw new Error(err)
     }
-    
   }
 }
 

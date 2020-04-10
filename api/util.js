@@ -110,6 +110,7 @@ exports.testSystem = () => {
   let success = true;
 
   try {
+    fs.mkdirSync(config.ABS_SNAP_DIR, {recursive: true})
     fs.accessSync(config.ABS_SNAP_DIR, fs.constants.R_OK | fs.constants.W_OK)
   } catch(err){
     throw new Error(`testSystem read/write error: ensure directory exists: ${config.ABS_SNAP_DIR}`)
@@ -126,8 +127,8 @@ exports.getFileBirthtime = (filePath) => {
     const stat = fs.statSync(filePath)
     birthTime = stat.birthtime
   } catch(err) {
-    console.error('meow getFileBirth', err)
-    //throw new Error(err)
+    // Todo: use logger?
+    console.error('Error: util.getFileBirth :: ', err)
   }
 
   return birthTime
@@ -140,8 +141,8 @@ exports.du = async (sysPath) => {
   try {
     stats = du(sysPath)
   } catch(err){
-    //throw new Error(err)
-    console.error('meow du', err)
+    // Todo: use logger?
+    console.error('Error: util.du :: ', err)
   }
 
   return stats

@@ -3,7 +3,6 @@ const puppeteer = require('puppeteer')
 //const pidusage = require('pidusage')
 
 // Testing utils
-const proxyquire = require('proxyquire').noCallThru()
 const sinon = require('sinon')
 const chai = require('chai')
 const assert = chai.assert
@@ -27,6 +26,14 @@ const mockPidusage = {
   ctime: 7900,
   elapsed: 1139273000,
   timestamp: 1586379986155
+}
+const mockPage = {
+  goto: sinon.spy(),
+  screenshot: sinon.spy()
+}
+const mockLogger = {
+  info: sinon.spy(),
+  error: sinon.spy()
 }
 
 // Testing this:
@@ -93,5 +100,52 @@ describe('API Browser', () => {
       browser.page = mockPInstance
       assert.deepEqual(browser.getPage(), mockPInstance)
     });
+  });
+
+  describe('storeSnapshot', () => {
+    const mockUrl = 'http://test.test'
+    const mockPath = '/tmp/test'
+
+    describe('When browser works', () => {
+      beforeEach(() => {
+        sinon.stub(browser, 'getPage').returns(mockPage)
+        browser.logger = mockLogger
+      });
+
+      afterEach(() => {
+        browser.getPage.restore()
+      });
+
+      it('should open the given URL', async () => {
+        await browser.storeSnapshot(mockUrl, mockPath)
+        sinon.assert.calledWith(mockPage.goto, mockUrl)
+      });
+
+      it('should store a screenshot at the given filePath', async () => {
+        await browser.storeSnapshot(mockUrl, mockPath)
+        sinon.assert.calledWith(mockPage.screenshot, {path: mockPath})
+      });
+    });
+
+    /* Todo: figure out how to make this fail and handle the
+       UnhandledPromiseRejectionWarning that shows up.
+
+    describe('When browser fails', () => {
+      beforeEach(() => {
+        sinon.stub(browser, 'getPage').rejects()
+        browser.logger = mockLogger
+      });
+
+      afterEach(() => {
+        browser.getPage.restore()
+      });
+
+      it('should throw when getPage fails', async () => {
+        assert.throws(async () => {
+            await browser.storeSnapshot(mockUrl, mockPath)
+        }, Error)
+      });
+    });
+    */
   });
 });

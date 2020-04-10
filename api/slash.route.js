@@ -3,7 +3,6 @@ const fs = require('fs')
 const util = require('./util')
 const config = require('./env').config()
 const browser = require('./browser')
-const logger = util.createLogger('stats.route')
 
 
 /**
@@ -11,6 +10,7 @@ const logger = util.createLogger('stats.route')
  * Serves an image after translating GET params into a filename.
  **/
 exports.route = async (req, res) => {
+  const logger = util.createLogger('stats.route')
   const hrstart = process.hrtime()
   const filePath = util.buildFilepath(req._parsedUrl)
 

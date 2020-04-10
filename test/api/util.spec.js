@@ -1,6 +1,7 @@
 // Packages
 const fs = require('fs')
 const url = require('url')
+const path = require('path')
 const winston = require('winston')
 const expressWinston = require('express-winston')
 
@@ -15,6 +16,9 @@ chai.use(require('chai-things'))
 
 // Mocking:
 const config = require('../../api/env').config()
+const mockStat = {
+    birthtime: 5
+}
 
 // Testing this:
 const util = require('../../api/util')
@@ -171,6 +175,13 @@ describe('API Utilities', () => {
             fs.accessSync.restore()
         });
 
+        it('should try to make the snapshot directory', () => {
+            sinon.stub(fs, "mkdirSync").returns(sinon.spy())
+            sinon.stub(fs, "accessSync").returns(true)
+            util.testSystem()
+            sinon.assert.called(fs.mkdirSync)
+        });
+
         it('should throw if accessSync fails', () => {
             sinon.stub(fs, "accessSync").throws()
             assert.throws(() => {
@@ -182,5 +193,36 @@ describe('API Utilities', () => {
             sinon.stub(fs, "accessSync").returns(true)
             assert.isTrue(util.testSystem())
         })
+    });
+
+    describe('getFileBirthtime', () => {
+        const mockPath = '/tmp/test'
+
+        beforeEach(() => {
+            sinon.stub(fs, "statSync").returns(mockStat)
+        });
+
+        afterEach(() => {
+            fs.statSync.restore()
+        });
+
+        it('should get fs stats for the given filePath', () => {
+            util.getFileBirthtime(mockPath)
+            sinon.assert.called(fs.statSync)
+        });
+
+        it('should return the birthtime', () => {
+            assert.equal(util.getFileBirthtime(mockPath), 5)
+        });
+    });
+
+    describe('du', () => {
+        // Todo: Figure out how to mock du(), maybe proxyquire?
+        // Currently using a live directory for this test.
+        it('should return path du stats', async () => {
+            const mockPath = __dirname
+            let duResult = await util.du(mockPath)
+            assert.isOk(duResult)
+        });
     });
 });

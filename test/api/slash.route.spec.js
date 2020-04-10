@@ -3,7 +3,6 @@ const fs = require('fs')
 const url = require('url')
 
 // Testing utils
-//const proxyquire = require('proxyquire').noCallThru()
 const sinon = require('sinon')
 const chai = require('chai')
 const assert = chai.assert
@@ -23,64 +22,49 @@ const mockRequest = {
 }
 const mockResponse = {
   set: sinon.spy(),
-  status: () => {
-    send: sinon.spy()
-  },
   sendFile: sinon.spy()
 }
-const mockLogger = {
-  info: () => {},
-  error: () => {}
-}
-const mockGetPage = {
-    goto: sinon.spy(),
-    screenshot: sinon.spy(),
-}
-const mockStatSync = {birthtime: 5}
-//const mockBrowser = {
-//  getPage: () => mockGetPage
-//}
-//const logger = util.createLogger('stats.route')
+const mockStoreSnapshot = sinon.spy()
 
 // Testing this:
 const slash = require('../../api/slash.route')
 
-describe.only('API Route: Slash', () => {
+describe('API Route: Slash', () => {
   beforeEach(() => {
-    sinon.stub(util, 'createLogger').returns(mockLogger)
-    sinon.stub(util, 'buildFilepath').returns(mockLogger)
-    sinon.stub(browser, 'getPage').returns(mockGetPage)
-    sinon.stub(process, 'hrtime')
-    sinon.stub(fs, 'existsSync').returns(false)
-    sinon.stub(fs, 'statSync').returns(mockStatSync)
-    
+    sinon.stub(util, 'buildFilepath').returns('/tmp/test')
+    sinon.stub(util, 'getFileBirthtime').returns(5)
+    sinon.stub(browser, 'storeSnapshot').returns(mockStoreSnapshot)
   });
 
   afterEach(() => {
     sinon.restore()
-  })
-
-  it.only('should return a file', async () => {
-    await slash.route(mockRequest, mockResponse)
-    sinon.assert.called(mockResponse.sendFile)
   });
 
-  it('should set a rendertime header', async () => {
-    //const res = await slash.route(mockRequest, mockResponse)
-    //console.log('res? ', res)
-  });
+  describe('When the file exists', () => {
+    beforeEach(() => {
+      sinon.stub(fs, 'existsSync').returns(true)
+    });
 
-  it('should set a birthtime header', async () => {
-    //const res = await slash.route(mockRequest, mockResponse)
-    //console.log('res? ', res)
-  });
+    it('should not take a screenshot', async () => {
+      await slash.route(mockRequest, mockResponse)
+      sinon.assert.notCalled(browser.storeSnapshot)
+    });
 
-  describe('When fs.statSync fails', () => {
-    it('should throw', async () => {
+    it('should return a file', async () => {
+      await slash.route(mockRequest, mockResponse)
+      sinon.assert.calledWith(mockResponse.sendFile, '/tmp/test')
+    });
 
+    it('should set a rendertime header', async () => {
+      await slash.route(mockRequest, mockResponse)
+      sinon.assert.calledWith(mockResponse.set, 'X-RCA-rendertime-ms')
+    });
+
+    it('should set a birthtime header', async () => {
+      await slash.route(mockRequest, mockResponse)
+      sinon.assert.calledWith(mockResponse.set, 'X-RCA-birthtime', 5)
     });
   });
-
 
   describe('When file does not exist', () => {
     beforeEach(() => {
@@ -88,17 +72,8 @@ describe.only('API Route: Slash', () => {
     });
 
     it('should take a screenshot', async () => {
-
-    });
-
-    describe('When the screenshot fails', () => {
-      it('should throw', async () => {
-
-      });
-
-      it('should return a 500 status', async () => {
-
-      });
+      await slash.route(mockRequest, mockResponse)
+      sinon.assert.called(browser.storeSnapshot)
     });
   });
 });
