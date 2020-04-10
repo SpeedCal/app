@@ -5,11 +5,11 @@ import "react-datepicker/dist/react-datepicker.css";
 
 export default function Form(props) {
   // console.log('props: ', props)
-  const { closeForm, edit } = props;
-
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
-  const [title, setTitle] = useState(props.title || '');
+  const { closeForm, event } = props;
+  console.log('event: ', event)
+  const [startDate, setStartDate] = useState(event ? event.startDate : new Date());
+  const [endDate, setEndDate] = useState(event ? event.endDate : new Date());
+  const [title, setTitle] = useState(event ? event.title : props.title || '');
   const [dateError, setDateError] = useState(false);
 
   const saveEvent = () => {
@@ -55,7 +55,7 @@ export default function Form(props) {
             <div>
               <Button onClick={saveEvent} variant="primary" className="btn-primary">Save</Button>{' '}
               <Button onClick={cancelEvent} variant="secondary" className="btn-secondary">Cancel</Button>{' '}
-              {edit ? <Button onClick={deleteEvent} variant="secondary" className="btn-danger">Delete</Button> : null}
+              {event ? <Button onClick={deleteEvent} variant="secondary" className="btn-danger">Delete</Button> : null}
             </div>
           </div>
         </form>
