@@ -12,15 +12,18 @@ import makeDateStrFromDateObj from '../helpers/makeDateStrFromDateObj'
 const Calendar = ({ history }) => {
   //const history = useHistory()
   const location = useLocation()
+
   const search = queryString.parse(location.search)
+  console.log('search: ', search)
+  console.log('search.events', search.events)
   const searchDate = dateFns.parse(search.selected, 'yyyy-MM-dd', new Date())
   const initialDate = dateFns.isValid(searchDate) ? searchDate : new Date()
 
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(initialDate);
   const [edit, setEdit] = useState(false);
-  const [eventDates, setEventDates] = useState([])
-  const [eventTitle, setEventTitle] = useState('')
+  const [eventDates, setEventDates] = useState(search.events || [])
+  const [eventTitle, setEventTitle] = useState(search.title || '')
   const [event, setEvent] = useState(null);
   // const [eventEnd, setEventEnd] = useState(null);
   // const [eventStart, setEventStart] = useState(null);
@@ -102,34 +105,17 @@ const Calendar = ({ history }) => {
   }
 
   const editEvent = () => {
-    console.log('edit')
     setEdit(true);
   }
 
   const closeForm = (event) => {
     setEdit(false);
-    console.log('close form event: ', event)
     if (event === "DELETE") {
       setEventDates([]);
       setEventTitle('');
       setEvent(null);
 
     } else if (event) {
-
-      // const newState = Object.assign({}, history.state, {
-      //   events: [event]
-      // })
-
-      // history.push({
-      //   search: '?' + queryString.stringify(newState),
-      //   state: newState
-      // })
-      // console.log('event: ', event)
-      // let startDate = dateFns.getDayOfYear(event.startDate); //pulls off day of the month from startDate obj.
-      // console.log('startDate: ', startDate)
-      // let numDays = Math.round((event.endDate - event.startDate) / 86400000); //number of milliseconds in a day.
-      // let datesOfEvent = [startDate];
-
       let result = dateFns.eachDayOfInterval({
         start: event.startDate,
         end: event.endDate
