@@ -1,0 +1,27 @@
+.col.cell .add-event-button { opacity: 0; }
+.col.cell:hover .add-event-button { opacity: 100; }
+
+.event-form-container {
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.dates-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.event-stripe {
+  background-color: aqua;
+  height: 1rem;
+  font-size: .8rem;
+  font-weight: 400;
+  align-items: center;
+  text-align: center;
+  padding-bottom: 5px;
+  width: 100%;
+  overflow: hidden;
+  z-index: 10000;
+  cursor:pointer;
+}

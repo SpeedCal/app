@@ -216,9 +216,9 @@ main {
   width: calc(100% / 7);
 }
 
-.add-event-button {
-  opacity: 20%;
-}
-.add-event-button:hover {
-  opacity: 100%;
+[class*="col"] {
+  position: relative;
+  width: 100%;
+  padding-right: 0px !important;
+  padding-left: 0px !important;
 }
