@@ -8,18 +8,21 @@ import Form from './Form';
 import makeArrayOfDateStr from '../helpers/makeArrayOfDateStr'
 import makeDateStrFromDateObj from '../helpers/makeDateStrFromDateObj'
 import urlReader from '../helpers/urlReader';
+import makeEventsArray from '../helpers/makeEventsArray';
 
 const Calendar = ({ history }) => {
   const location = useLocation()
   const search = queryString.parse(location.search)
+  const eventsArray = makeEventsArray(search);
   const urlEvent = urlReader(search);
+  console.log('urlEvent: ', urlEvent)
   const searchDate = dateFns.parse(search.selected, 'yyyy-MM-dd', new Date());
   const initialDate = dateFns.isValid(searchDate) ? searchDate : new Date();
 
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(initialDate);
   const [edit, setEdit] = useState(false);
-  const [eventDates, setEventDates] = useState(search.events || []);
+  const [eventDates, setEventDates] = useState(eventsArray || []);
   const [eventTitle, setEventTitle] = useState(search.title || '');
   const [event, setEvent] = useState(urlEvent || null);
   // console.log('eventDates: ', eventDates);
