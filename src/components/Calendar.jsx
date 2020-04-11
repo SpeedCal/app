@@ -7,36 +7,22 @@ import Form from './Form';
 //import { logger } from "services/Logger";
 import makeArrayOfDateStr from '../helpers/makeArrayOfDateStr'
 import makeDateStrFromDateObj from '../helpers/makeDateStrFromDateObj'
+import urlReader from '../helpers/urlReader';
 
-//function Calendar(){
 const Calendar = ({ history }) => {
-  //const history = useHistory()
   const location = useLocation()
-
   const search = queryString.parse(location.search)
-  console.log('search: ', search)
-  console.log('search.events', search.events)
-  const searchDate = dateFns.parse(search.selected, 'yyyy-MM-dd', new Date())
-  const initialDate = dateFns.isValid(searchDate) ? searchDate : new Date()
+  const urlEvent = urlReader(search);
+  const searchDate = dateFns.parse(search.selected, 'yyyy-MM-dd', new Date());
+  const initialDate = dateFns.isValid(searchDate) ? searchDate : new Date();
 
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(initialDate);
   const [edit, setEdit] = useState(false);
-  const [eventDates, setEventDates] = useState(search.events || [])
-  const [eventTitle, setEventTitle] = useState(search.title || '')
-  const [event, setEvent] = useState(null);
-  // const [eventEnd, setEventEnd] = useState(null);
-  // const [eventStart, setEventStart] = useState(null);
+  const [eventDates, setEventDates] = useState(search.events || []);
+  const [eventTitle, setEventTitle] = useState(search.title || '');
+  const [event, setEvent] = useState(urlEvent || null);
 
-  // const [search, setSearch] = useState(queryString.parse(rawLocation.search));
-  // console.log(rawLocation)
-  // console.log(search)
-  //console.log('history:  ', history.location.search)
-  //console.log('location: ', location.search)
-
-  //history.listen(loc => {
-  //  console.log('loc: ', loc)
-  //})
   useEffect(() => history.listen((newHistory) => {
     const newDate = queryString.parse(newHistory.search)?.selected
     const historyDate = dateFns.parse(newDate, 'yyyy-MM-dd', new Date())
@@ -45,18 +31,7 @@ const Calendar = ({ history }) => {
 
   const onDateClick = date => {
     const day = dateFns.parse(date, 'yyyy-MM-dd', new Date())
-
-    const newState = Object.assign({}, history.state, {
-      selected: date
-    })
-
-    history.push({
-      search: '?' + queryString.stringify(newState),
-      state: newState
-    })
-
     setSelectedDate(day)
-    // console.log('CLICK', day, date)
   };
 
   const nextMonth = () => {
@@ -115,21 +90,30 @@ const Calendar = ({ history }) => {
       setEventTitle('');
       setEvent(null);
 
+      // resetting url to empty as well.
+      const newState = Object.assign({}, history.state, {})
+
+      history.push({
+        search: '?' + queryString.stringify(''),
+        state: newState
+      })
+
     } else if (event) {
       let result = dateFns.eachDayOfInterval({
         start: event.startDate,
         end: event.endDate
       })
       let dateStrArray = makeArrayOfDateStr(result)
-      setEvent(event);
 
+      setEvent(event);
       setEventDates(dateStrArray);
       setEventTitle(event.title);
 
       const newState = Object.assign({}, history.state, {
         title: event.title,
-        events: dateStrArray
+        events: dateStrArray,
       })
+
       history.push({
         search: '?' + queryString.stringify(newState),
         state: newState
