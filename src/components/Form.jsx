@@ -27,7 +27,6 @@ export default function Form(props) {
       setDateError(true);
     } else {
       setDateError(false);
-      console.log('correct format event: ', newEvent)
       closeForm(newEvent);
     }
   }

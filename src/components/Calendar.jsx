@@ -22,6 +22,8 @@ const Calendar = ({ history }) => {
   const [eventDates, setEventDates] = useState(search.events || []);
   const [eventTitle, setEventTitle] = useState(search.title || '');
   const [event, setEvent] = useState(urlEvent || null);
+  // console.log('eventDates: ', eventDates);
+  // console.log('calendar event: ', event);
 
   useEffect(() => history.listen((newHistory) => {
     const newDate = queryString.parse(newHistory.search)?.selected
@@ -31,6 +33,7 @@ const Calendar = ({ history }) => {
 
   const onDateClick = date => {
     const day = dateFns.parse(date, 'yyyy-MM-dd', new Date())
+    // console.log('day: ', day)
     setSelectedDate(day)
   };
 
@@ -91,7 +94,7 @@ const Calendar = ({ history }) => {
       setEvent(null);
 
       // resetting url to empty as well.
-      const newState = Object.assign({}, history.state, {})
+      const newState = Object.assign({})
 
       history.push({
         search: '?' + queryString.stringify(''),
@@ -109,11 +112,11 @@ const Calendar = ({ history }) => {
       setEventDates(dateStrArray);
       setEventTitle(event.title);
 
-      const newState = Object.assign({}, history.state, {
+      const newState = Object.assign({}, {
         title: event.title,
         events: dateStrArray,
       })
-
+      // console.log('newState: ', newState)
       history.push({
         search: '?' + queryString.stringify(newState),
         state: newState
@@ -127,7 +130,7 @@ const Calendar = ({ history }) => {
     const startDate = dateFns.startOfWeek(monthStart);
     const endDate = dateFns.endOfWeek(monthEnd);
 
-    const dateFormat = "d";
+    const dateFormat = "dd";
     const rows = [];
 
     let days = [];
@@ -138,8 +141,11 @@ const Calendar = ({ history }) => {
     while (day <= endDate) {
       for (let i = 0; i < 7; i++) {
         formattedDate = dateFns.format(day, dateFormat);
+        // console.log('formated date: ', formattedDate)
+        // console.log('day: ', day)
         currentDateString = makeDateStrFromDateObj(day)
-
+        // console.log('eventDates: ', eventDates);
+        // console.log('currentDateString: ', currentDateString)
         // This is gross - I think this works because `const` prevents further mutation.
         // If the onClick() fn uses `day` the selected class never moves...
         const cloneDay = day;
