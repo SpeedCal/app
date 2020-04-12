@@ -15,7 +15,7 @@ const Calendar = ({ history }) => {
   const search = queryString.parse(location.search)
   const eventsArray = makeEventsArray(search);
   const urlEvent = urlReader(search);
-  console.log('urlEvent: ', urlEvent)
+  // console.log('urlEvent: ', urlEvent)
   const searchDate = dateFns.parse(search.selected, 'yyyy-MM-dd', new Date());
   const initialDate = dateFns.isValid(searchDate) ? searchDate : new Date();
 
@@ -86,6 +86,7 @@ const Calendar = ({ history }) => {
   }
 
   const editEvent = () => {
+    // console.log('current Date: ', selectedDate)
     setEdit(true);
   }
 
@@ -165,7 +166,7 @@ const Calendar = ({ history }) => {
           >
             <span className="number">{formattedDate}</span>
             {/* <span className="bg">{formattedDate}</span> */}
-            {edit ? null : <span><IoIosAdd className="add-event-button" size={25} onClick={editEvent} /></span>}
+            {edit ? null : <span className={currentDateString}><IoIosAdd className="add-event-button" size={25} onClick={editEvent} /></span>}
             {/* Chained ternary checks if the current date being rendered is a member of the eventDates array, if 
             not then null. Otherwise insert the event stripe and only put the title if it's the fisrt date of the event. */}
             {!eventDates.includes(currentDateString)
@@ -190,7 +191,7 @@ const Calendar = ({ history }) => {
 
   return (
     <div className="calendar">
-      {edit ? <Form closeForm={closeForm} event={event} /> : null}
+      {edit ? <Form closeForm={closeForm} event={event} selected={selectedDate} /> : null}
       {renderHeader()}
       {renderDays()}
       {renderCells()}
