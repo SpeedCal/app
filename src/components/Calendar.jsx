@@ -87,6 +87,8 @@ const Calendar = ({ history }) => {
 
   const editEvent = () => {
     // console.log('current Date: ', selectedDate)
+    // const location = useLocation()
+    console.log('location: ', location)
     setEdit(true);
   }
 
