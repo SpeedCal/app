@@ -1,0 +1,11 @@
+version: "3.7"
+
+services:
+
+  api:
+    image: speedcal-api
+    build:
+      context: .
+      dockerfile: ./docker/api/Dockerfile
+    ports:
+      - 3001:3001

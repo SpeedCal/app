@@ -13,9 +13,28 @@ class Browser {
     this.logger = util.createLogger('browser')
   }
 
+  getPuppeteerOpts(){
+    return util.isProduction() ?
+      {
+        headless: true,
+        executablePath: '/usr/bin/chromium-browser',
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+      } :
+      {
+        headless: false,
+        slowMo: 250,
+        devtools: true,
+      }
+  }
+
   async init(){
-    this.instance = await puppeteer.launch(util.isDebugging())
-    this.page = await this.instance.newPage()
+    try{
+      this.instance = await puppeteer.launch(this.getPuppeteerOpts())
+      this.page = await this.instance.newPage()
+    } catch(err) {
+      this.logger.error(err)
+      throw new Error(err)
+    }
   }
 
   async stats(){

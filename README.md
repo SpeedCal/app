@@ -67,17 +67,20 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
 
-### Puppeteer
+### Docker
 
-The [following command](https://github.com/puppeteer/puppeteer/issues/4752) can be run to prevent the network connection popup on each run:
+The API can be run in a containerized format, using [Docker-Compose](https://docs.docker.com/compose/):
 
+```sh
+# Wait for the build, then visit http://localhost:3001/stats in browser
+docker-compose up -d
+
+# View container logs
+docker-compose logs
 ```
-APP=$(find node_modules/puppeteer -name Chromium.app)
-sudo codesign --force --deep --sign - "./${APP}"
+
+... or by executing the Docker build step manually:
+
+```sh
+docker build -f ./docker/api/Dockerfile -t speedcal-api .
 ```
-
-### To Do
-
-- Make a location.search parser service with docs and support for all handled URL parameters
-  - Hook this into history.listen
-- Implement https://www.npmjs.com/package/api-key-auth
