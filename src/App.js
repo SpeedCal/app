@@ -32,7 +32,7 @@ function Home() {
         <div id="logo">
           <span className="icon">date_range</span>
           <span>
-            react<b>calendar</b>
+            speed<b>cal</b>.date
           </span>
         </div>
       </header>
