@@ -9,12 +9,13 @@ on:
 
 jobs:
   build:
-  - name: Installing dependencies
-    run: npm install
+    name: Install & Build
+    steps:
+    - id: install
+      run: npm install
+    - id: build
+      run: npm build
       
-  - name: Building the Application
-    run: npm build
-
   deploy:
     runs-on: ubuntu-latest
     steps:
