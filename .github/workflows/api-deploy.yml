@@ -40,7 +40,7 @@ name: Deploy API to Amazon ECS
 
 jobs:
   deploy:
-    name: Deploy
+    name: Deploy API
     runs-on: ubuntu-latest
 
     steps:
@@ -84,6 +84,6 @@ jobs:
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: sample-app-service
-        cluster: default
+        service: speedcal-api-service
+        cluster: speedcal-api
         wait-for-service-stability: true
