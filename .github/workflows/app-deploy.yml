@@ -3,7 +3,7 @@ name: Upload Frontend
 on:
   push:
     branches: [ master ]
-  pull_requests:
+  pull_request:
     branches: 
     - dev
 
