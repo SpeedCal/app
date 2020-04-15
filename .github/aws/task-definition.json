@@ -23,13 +23,6 @@
                     "value": "AWS"
                 }
             ],
-            "linuxParameters": {
-                "capabilities": {},
-                "devices": [],
-                "initProcessEnabled": true,
-                "sharedMemorySize": 0,
-                "tmpfs": []
-            },
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
