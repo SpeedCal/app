@@ -25,6 +25,7 @@ const Calendar = ({ history }) => {
   const [eventDates, setEventDates] = useState(eventsArray || []);
   const [eventTitle, setEventTitle] = useState(search.title || '');
   const [event, setEvent] = useState(urlEvent || null);
+  const [plusClickDate, setPlusClickDate] = useState(null);
   // console.log('eventDates: ', eventDates);
   // console.log('calendar event: ', event);
 
@@ -85,10 +86,13 @@ const Calendar = ({ history }) => {
     return <div className="days row">{days}</div>;
   }
 
-  const editEvent = () => {
+  const editEvent = (date) => {
     // console.log('current Date: ', selectedDate)
     // const location = useLocation()
-    console.log('location: ', location)
+    console.log('date: ', date)
+    if (!event) {
+      setPlusClickDate(date)
+    }
     setEdit(true);
   }
 
@@ -113,7 +117,8 @@ const Calendar = ({ history }) => {
         end: event.endDate
       })
       let dateStrArray = makeArrayOfDateStr(result)
-
+      console.log('next:  ', event)
+      console.log(dateStrArray)
       setEvent(event);
       setEventDates(dateStrArray);
       setEventTitle(event.title);
@@ -168,7 +173,7 @@ const Calendar = ({ history }) => {
           >
             <span className="number">{formattedDate}</span>
             {/* <span className="bg">{formattedDate}</span> */}
-            {edit ? null : <span className={currentDateString}><IoIosAdd className="add-event-button" size={25} onClick={editEvent} /></span>}
+            {event ? <div>&nbsp;</div> : <span className={currentDateString}><IoIosAdd className="add-event-button" size={25} onClick={() => editEvent(cloneDay)} /></span>}
             {/* Chained ternary checks if the current date being rendered is a member of the eventDates array, if 
             not then null. Otherwise insert the event stripe and only put the title if it's the fisrt date of the event. */}
             {!eventDates.includes(currentDateString)
@@ -193,7 +198,7 @@ const Calendar = ({ history }) => {
 
   return (
     <div className="calendar">
-      {edit ? <Form closeForm={closeForm} event={event} selected={selectedDate} /> : null}
+      {edit ? <Form closeForm={closeForm} event={event} selected={selectedDate} plusClickDate={plusClickDate} /> : null}
       {renderHeader()}
       {renderDays()}
       {renderCells()}

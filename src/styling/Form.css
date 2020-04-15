@@ -19,9 +19,15 @@
   font-weight: 400;
   align-items: center;
   text-align: center;
-  padding-bottom: 5px;
+  padding-top: auto;
+  padding-bottom: auto;
+  margin-top: auto;
+  margin-bottom: auto;
   width: 100%;
   overflow: hidden;
   z-index: 10000;
-  cursor:pointer;
+}
+
+div.col.cell .event-stripe:hover {
+  box-shadow: 2px 0px 2px 0px  #1a8fff;
 }

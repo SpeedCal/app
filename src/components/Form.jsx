@@ -4,11 +4,12 @@ import { Button, FormGroup, FormControl, ControlLabel, Alert } from 'react-boots
 import "react-datepicker/dist/react-datepicker.css";
 
 export default function Form(props) {
-  const { closeForm, event } = props;
+  const { closeForm, event, plusClickDate } = props;
+  console.log('plus: ', plusClickDate)
 
   const defaultEvent = {
-    startDate: new Date(),
-    endDate: new Date(),
+    startDate: plusClickDate,
+    endDate: plusClickDate,
     title: ''
   }
 
@@ -21,7 +22,7 @@ export default function Form(props) {
 
   const saveEvent = () => {
     const newEvent = { title, startDate, endDate }
-
+    console.log(newEvent)
     //check for date error
     if (startDate > endDate) {
       setDateError(true);
