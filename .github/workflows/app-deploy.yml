@@ -19,11 +19,6 @@ jobs:
       run: npm ci
     - id: build
       run: npm run build
-
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
     - uses: jakejarvis/s3-sync-action@master
       with:
         args: --acl public-read --follow-symlinks --delete

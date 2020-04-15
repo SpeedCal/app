@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import * as dateFns from "date-fns";
-import { useLocation, useHistory, withRouter } from 'react-router-dom';
+import { useLocation, withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 import { IoIosAdd } from "react-icons/io";
 import Form from './Form';
@@ -33,7 +33,7 @@ const Calendar = ({ history }) => {
     const newDate = queryString.parse(newHistory.search)?.selected
     const historyDate = dateFns.parse(newDate, 'yyyy-MM-dd', new Date())
     setSelectedDate(historyDate)
-  }), [])
+  }), [history])
 
   const onDateClick = date => {
     const day = dateFns.parse(date, 'yyyy-MM-dd', new Date())
