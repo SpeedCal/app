@@ -9,13 +9,14 @@ on:
 
 jobs:
   build:
+    - name: Installing dependencies
+      run: npm install
+      
+    - name: Building the Application
+      run: npm build
 
+  deploy:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [12.x, 13.x]
-
     steps:
     - uses: actions/checkout@master
     - uses: jakejarvis/s3-sync-action@master
