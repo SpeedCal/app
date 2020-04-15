@@ -29,11 +29,14 @@
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches:
-      - dev
 
-name: Deploy to Amazon ECS
+  pull_request:
+    branches: [ dev ]
+    paths-ignore:
+    - 'src/**'
+    - 'test/app/**'
+
+name: Deploy API to Amazon ECS
 
 jobs:
   deploy:
@@ -65,7 +68,8 @@ jobs:
         # Build a docker container and
         # push it to ECR so that it can
         # be deployed to ECS.
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        #docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        npm run api:docker:build
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
