@@ -2,7 +2,7 @@ name: Upload Frontend
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, dev ]
   pull_request:
     branches: 
     - dev
@@ -15,7 +15,7 @@ jobs:
       run: npm install
     - id: build
       run: npm build
-      
+
   deploy:
     runs-on: ubuntu-latest
     steps:
