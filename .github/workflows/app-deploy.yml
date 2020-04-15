@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Install & Build
     steps:
+    - uses: actions/checkout@v2
     - id: where_are_we
       run: ls -al && ls -al ..
     - id: install
