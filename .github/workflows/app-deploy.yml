@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Install & Build
     steps:
-    - id: where are we
+    - id: where_are_we
       run: ls -al && ls -al ..
     - id: install
       run: npm ci
