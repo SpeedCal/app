@@ -18,10 +18,9 @@
             ],
             "essential": true,
             "environment": [
-                {
-                    "name": "ENV",
-                    "value": "AWS"
-                }
+                {"name": "ENV", "value": "AWS"},
+                {"name": "APP_URL", "value": "http://dev.speedcal.date"},
+                {"name": "PORT", "value": "80"}
             ],
             "logConfiguration": {
                 "logDriver": "awslogs",
