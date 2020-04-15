@@ -4,11 +4,8 @@
     "networkMode": "awsvpc",
     "containerDefinitions": [
         {
-            "name": "",
-            "image": "",
-            "repositoryCredentials": {
-                "credentialsParameter": ""
-            },
+            "name": "speedcal-api",
+            "image": "942897609521.dkr.ecr.us-west-2.amazonaws.com/speedcal-api-ecr",
             "cpu": 256,
             "memory": 512,
             "memoryReservation": 512,
