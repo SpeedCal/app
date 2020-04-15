@@ -7,33 +7,28 @@ import Form from './Form';
 //import { logger } from "services/Logger";
 import makeArrayOfDateStr from '../helpers/makeArrayOfDateStr'
 import makeDateStrFromDateObj from '../helpers/makeDateStrFromDateObj'
+import urlReader from '../helpers/urlReader';
+import makeEventsArray from '../helpers/makeEventsArray';
 
-//function Calendar(){
 const Calendar = ({ history }) => {
-  //const history = useHistory()
   const location = useLocation()
   const search = queryString.parse(location.search)
-  const searchDate = dateFns.parse(search.selected, 'yyyy-MM-dd', new Date())
-  const initialDate = dateFns.isValid(searchDate) ? searchDate : new Date()
+  const eventsArray = makeEventsArray(search);
+  const urlEvent = urlReader(search);
+  // console.log('urlEvent: ', urlEvent)
+  const searchDate = dateFns.parse(search.selected, 'yyyy-MM-dd', new Date());
+  const initialDate = dateFns.isValid(searchDate) ? searchDate : new Date();
 
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(initialDate);
   const [edit, setEdit] = useState(false);
-  const [eventDates, setEventDates] = useState([])
-  const [eventTitle, setEventTitle] = useState('')
-  const [event, setEvent] = useState(null);
-  // const [eventEnd, setEventEnd] = useState(null);
-  // const [eventStart, setEventStart] = useState(null);
+  const [eventDates, setEventDates] = useState(eventsArray || []);
+  const [eventTitle, setEventTitle] = useState(search.title || '');
+  const [event, setEvent] = useState(urlEvent || null);
+  const [plusClickDate, setPlusClickDate] = useState(null);
+  // console.log('eventDates: ', eventDates);
+  // console.log('calendar event: ', event);
 
-  // const [search, setSearch] = useState(queryString.parse(rawLocation.search));
-  // console.log(rawLocation)
-  // console.log(search)
-  //console.log('history:  ', history.location.search)
-  //console.log('location: ', location.search)
-
-  //history.listen(loc => {
-  //  console.log('loc: ', loc)
-  //})
   useEffect(() => history.listen((newHistory) => {
     const newDate = queryString.parse(newHistory.search)?.selected
     const historyDate = dateFns.parse(newDate, 'yyyy-MM-dd', new Date())
@@ -42,18 +37,8 @@ const Calendar = ({ history }) => {
 
   const onDateClick = date => {
     const day = dateFns.parse(date, 'yyyy-MM-dd', new Date())
-
-    const newState = Object.assign({}, history.state, {
-      selected: date
-    })
-
-    history.push({
-      search: '?' + queryString.stringify(newState),
-      state: newState
-    })
-
+    // console.log('day: ', day)
     setSelectedDate(day)
-    // console.log('CLICK', day, date)
   };
 
   const nextMonth = () => {
@@ -101,44 +86,52 @@ const Calendar = ({ history }) => {
     return <div className="days row">{days}</div>;
   }
 
-  const editEvent = () => {
-    console.log('edit')
+  const editEvent = (date) => {
+    // console.log('current Date: ', selectedDate)
+    // const location = useLocation()
+    console.log('date: ', date)
+    if (!event) {
+      setPlusClickDate(date)
+    }
     setEdit(true);
   }
 
   const closeForm = (event) => {
     setEdit(false);
-    console.log('close form event: ', event)
     if (event === "DELETE") {
       setEventDates([]);
       setEventTitle('');
       setEvent(null);
 
-    } else if (event) {
-
-      const newState = Object.assign({}, history.state, {
-        events: [event]
-      })
+      // resetting url to empty as well.
+      const newState = Object.assign({})
 
       history.push({
-        search: '?' + queryString.stringify(newState),
+        search: '?' + queryString.stringify(''),
         state: newState
       })
-      // console.log('event: ', event)
-      // let startDate = dateFns.getDayOfYear(event.startDate); //pulls off day of the month from startDate obj.
-      // console.log('startDate: ', startDate)
-      // let numDays = Math.round((event.endDate - event.startDate) / 86400000); //number of milliseconds in a day.
-      // let datesOfEvent = [startDate];
 
+    } else if (event) {
       let result = dateFns.eachDayOfInterval({
         start: event.startDate,
         end: event.endDate
       })
       let dateStrArray = makeArrayOfDateStr(result)
+      console.log('next:  ', event)
+      console.log(dateStrArray)
       setEvent(event);
-
       setEventDates(dateStrArray);
       setEventTitle(event.title);
+
+      const newState = Object.assign({}, {
+        title: event.title,
+        events: dateStrArray,
+      })
+      // console.log('newState: ', newState)
+      history.push({
+        search: '?' + queryString.stringify(newState),
+        state: newState
+      })
     }
   }
 
@@ -148,7 +141,7 @@ const Calendar = ({ history }) => {
     const startDate = dateFns.startOfWeek(monthStart);
     const endDate = dateFns.endOfWeek(monthEnd);
 
-    const dateFormat = "d";
+    const dateFormat = "dd";
     const rows = [];
 
     let days = [];
@@ -159,8 +152,11 @@ const Calendar = ({ history }) => {
     while (day <= endDate) {
       for (let i = 0; i < 7; i++) {
         formattedDate = dateFns.format(day, dateFormat);
+        // console.log('formated date: ', formattedDate)
+        // console.log('day: ', day)
         currentDateString = makeDateStrFromDateObj(day)
-
+        // console.log('eventDates: ', eventDates);
+        // console.log('currentDateString: ', currentDateString)
         // This is gross - I think this works because `const` prevents further mutation.
         // If the onClick() fn uses `day` the selected class never moves...
         const cloneDay = day;
@@ -177,7 +173,7 @@ const Calendar = ({ history }) => {
           >
             <span className="number">{formattedDate}</span>
             {/* <span className="bg">{formattedDate}</span> */}
-            {edit ? null : <span><IoIosAdd className="add-event-button" size={25} onClick={editEvent} /></span>}
+            {event ? <div>&nbsp;</div> : <span className={currentDateString}><IoIosAdd className="add-event-button" size={25} onClick={() => editEvent(cloneDay)} /></span>}
             {/* Chained ternary checks if the current date being rendered is a member of the eventDates array, if 
             not then null. Otherwise insert the event stripe and only put the title if it's the fisrt date of the event. */}
             {!eventDates.includes(currentDateString)
@@ -202,7 +198,7 @@ const Calendar = ({ history }) => {
 
   return (
     <div className="calendar">
-      {edit ? <Form closeForm={closeForm} event={event} /> : null}
+      {edit ? <Form closeForm={closeForm} event={event} selected={selectedDate} plusClickDate={plusClickDate} /> : null}
       {renderHeader()}
       {renderDays()}
       {renderCells()}
