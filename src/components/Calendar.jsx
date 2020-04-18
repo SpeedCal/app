@@ -17,7 +17,9 @@ const Calendar = ({ history }) => {
   const searchDate = dateFns.parse(search.selected, 'yyyy-MM-dd', new Date());
   const initialDate = dateFns.isValid(searchDate) ? searchDate : new Date();
 
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [currentMonth, setCurrentMonth] = useState(
+    urlEvent.startDate || new Date()
+  );
   const [selectedDate, setSelectedDate] = useState(initialDate);
   const [edit, setEdit] = useState(false);
   const [eventDates, setEventDates] = useState(eventsArray || []);
