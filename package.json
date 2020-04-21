@@ -18,7 +18,7 @@
     "express-winston": "^4.0.3",
     "handlebars": "^4.7.3",
     "pidusage": "^2.0.18",
-    "puppeteer": "^2.1.1",
+    "puppeteer": "^3.0.0",
     "react": "^16.13.1",
     "react-bootstrap": "^0.32.4",
     "react-datepicker": "^2.14.1",
