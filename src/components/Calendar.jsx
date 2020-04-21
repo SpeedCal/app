@@ -8,19 +8,34 @@ import makeArrayOfDateStr from '../helpers/makeArrayOfDateStr';
 import makeDateStrFromDateObj from '../helpers/makeDateStrFromDateObj';
 import urlReader from '../helpers/urlReader';
 import makeEventsArray from '../helpers/makeEventsArray';
+import { Button } from 'react-bootstrap';
+// import 'dotenv-defaults/config';
+// require('dotenv-defaults/config');
+// const path = require('path');
+// require('dotenv-defaults').config();
+// import 'dotenv-defaults/config';
+// require('dotenv').config({
+//   path:
+//     '/Users/MaxRosenthal/lighthouse/projects/react-calendar-api/.env.defaults',
+//   // encoding: 'utf8',
+//   // defaults: '../../.env.defaults', // This is new
+// });
 
 const Calendar = ({ history }) => {
   const location = useLocation();
   const search = queryString.parse(location.search);
   const eventsArray = makeEventsArray(search);
   const urlEvent = urlReader(search);
-  const searchDate = dateFns.parse(search.selected, 'yyyy-MM-dd', new Date());
-  const initialDate = dateFns.isValid(searchDate) ? searchDate : new Date();
 
+<<<<<<< HEAD
   const [currentMonth, setCurrentMonth] = useState(
     urlEvent.startDate || new Date()
   );
   const [selectedDate, setSelectedDate] = useState(initialDate);
+=======
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(new Date());
+>>>>>>> Added .env file with REACT_APP_ variables so react will recognize them. Button now opens new tab and takes screen shot. screen shot should be formated better.
   const [edit, setEdit] = useState(false);
   const [eventDates, setEventDates] = useState(eventsArray || []);
   const [eventTitle, setEventTitle] = useState(search.title || '');
@@ -132,6 +147,14 @@ const Calendar = ({ history }) => {
     }
   };
 
+  const takeScreenshot = () => {
+    console.log('taking screenshot');
+    console.log('process.env: ', process.env);
+    let url = `//${process.env.REACT_APP_URL}:${process.env.REACT_APP_API_PORT}/${location.search}`;
+    console.log('url: ', url);
+    window.open(url);
+  };
+
   const renderCells = () => {
     const monthStart = dateFns.startOfMonth(currentMonth);
     const monthEnd = dateFns.endOfMonth(monthStart);
@@ -167,7 +190,6 @@ const Calendar = ({ history }) => {
             onClick={() => onDateClick(dateFns.format(cloneDay, 'yyyy-MM-dd'))}
           >
             <span className='number'>{formattedDate}</span>
-            {/* <span className="bg">{formattedDate}</span> */}
             {event ? (
               <div>&nbsp;</div>
             ) : (
@@ -180,7 +202,7 @@ const Calendar = ({ history }) => {
               </span>
             )}
             {/* Chained ternary checks if the current date being rendered is a member of the eventDates array, if 
-            not then null. Otherwise insert the event stripe and only put the title if it's the fisrt date of the event. */}
+            not then render null. Otherwise insert the event stripe and only put the title if it's the fisrt date of the event. */}
             {!eventDates.includes(
               currentDateString
             ) ? null : currentDateString === eventDates[0] ? (
@@ -208,6 +230,17 @@ const Calendar = ({ history }) => {
 
   return (
     <div className='calendar'>
+      {edit ? null : (
+        <div className='screenshot-button'>
+          <Button
+            onClick={takeScreenshot}
+            variant='primary'
+            className='btn-primary'
+          >
+            Generate Screenshot
+          </Button>
+        </div>
+      )}
       {edit ? (
         <Form
           closeForm={closeForm}
