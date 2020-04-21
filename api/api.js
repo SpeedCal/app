@@ -44,8 +44,6 @@ const listener = async () => {
   logger.info(`API listening on http://localhost:${config.API_PORT}`)
 
   // Public routes:
-  //app.get('/', slash.route)
-  //app.get('/stats', stats.route);
   router.get('/', slash.route)
   app.use('/', router);
 

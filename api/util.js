@@ -85,7 +85,7 @@ exports.buildFilename = (parsedUrl) => {
     throw new Error('Unexpected parsedUrl object')
   }
   const parsedPath = path.parse(parsedUrl.pathname)
-  const parsedQuery = parsedUrl.query.replace(/=/gi, '_')
+  const parsedQuery = parsedUrl.query ? parsedUrl.query.replace(/=/gi, '_') : ''
   const fileName = `${parsedPath.name}-${parsedQuery}${parsedPath.ext}`
   return fileName
 }
