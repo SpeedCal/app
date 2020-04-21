@@ -15,7 +15,7 @@ exports.route = async (req, res) => {
   const filePath = util.buildFilepath(req._parsedUrl)
 
   if (!fs.existsSync(filePath)) {
-    const url = `${config.APP_URL}:${config.PORT}${req.url}`
+    const url = `${config.REACT_APP_URL}:${config.REACT_APP_PORT}${req.url}`
     await browser.storeSnapshot(url, filePath)
   }
 

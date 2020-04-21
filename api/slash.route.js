@@ -1,6 +1,6 @@
 const util = require('./util')
 const config = require('./env').config()
-const pkg = require('../package.json')
+const pkg = require('root-require')('package.json')
 
 /**
  * Raw image URL

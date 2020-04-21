@@ -19,8 +19,11 @@
             "essential": true,
             "environment": [
                 {"name": "ENV", "value": "AWS"},
-                {"name": "APP_URL", "value": "http://dev.speedcal.date"},
-                {"name": "PORT", "value": "80"}
+                {"name": "NODE_ENV", "value": "production"},
+                {"name": "REACT_APP_URL", "value": "dev.speedcal.date"},
+                {"name": "REACT_APP_PORT", "value": "80"},
+                {"name": "REACT_APP_API_URL", "value": "api.dev.speedcal.date"},
+                {"name": "REACT_APP_API_PORT", "value": "80"}
             ],
             "logConfiguration": {
                 "logDriver": "awslogs",
