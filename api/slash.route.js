@@ -1,6 +1,6 @@
 const util = require('./util')
 const config = require('./env').config()
-
+const pkg = require('../package.json')
 
 /**
  * Raw image URL
@@ -8,5 +8,5 @@ const config = require('./env').config()
  **/
 exports.route = async (req, res) => {
   const logger = util.createLogger('snap.route')
-  return res.json({apiVersion: 1, appVersion: 2})
+  return res.json({version: pkg.version})
 }

@@ -42,7 +42,7 @@ const listener = async () => {
 
   await browser.init()
   logger.info(`NODE_ENV = ${config.NODE_ENV}`)
-  logger.info(`API listening on http://localhost:${config.API_PORT}`)
+  logger.info(`API listening on http://localhost:${config.REACT_APP_API_PORT}`)
 
   // Public routes:
   router.get('/', slash.route);
@@ -59,8 +59,7 @@ const listener = async () => {
 }
 
 
-
-const server = app.listen(config.API_PORT, async () => listener())
+const server = app.listen(config.REACT_APP_API_PORT, async () => listener())
 
 
 /**
