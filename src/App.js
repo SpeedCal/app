@@ -1,26 +1,21 @@
-import React from "react";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  //Link
-} from "react-router-dom";
-
-import Calendar from "./components/Calendar";
-import Image from "./components/Image";
-import "./App.css";
+import React from 'react';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Calendar from 'components/Calendar';
+import './styling/App.css';
+import './styling/Form.css';
 
 class App extends React.Component {
   render() {
     return (
       <Router>
         <Switch>
-          <Route exact path="/">
-            <Home />
-          </Route>
-          <Route exact path="/calendar.jpg">
-            <Image />
-          </Route>
+          <Route exact path='/' component={Home} />
+          <Route
+            exact
+            path='/calendar.jpg'
+            render={(props) => <Calendar {...props} takingScreenShot={true} />}
+          />
         </Switch>
       </Router>
     );
@@ -29,12 +24,12 @@ class App extends React.Component {
 
 function Home() {
   return (
-    <div className="App">
+    <div className='App'>
       <header>
-        <div id="logo">
-          <span className="icon">date_range</span>
+        <div id='logo'>
+          <span className='icon'>date_range</span>
           <span>
-            react<b>calendar</b>
+            speed<b>cal</b>.date
           </span>
         </div>
       </header>

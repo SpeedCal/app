@@ -1,0 +1,8 @@
+.git
+.cache
+*.md
+snapshots
+coverage
+.nyc_output
+node_modules
+

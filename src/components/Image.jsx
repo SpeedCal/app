@@ -9,7 +9,7 @@ class Image extends React.Component {
   render() {
     return (
       <div className="calendar-image">
-        hi
+        calendar-image
       </div>
     );
   }
