@@ -8,19 +8,18 @@ import makeArrayOfDateStr from '../helpers/makeArrayOfDateStr';
 import makeDateStrFromDateObj from '../helpers/makeDateStrFromDateObj';
 import urlReader from '../helpers/urlReader';
 import makeEventsArray from '../helpers/makeEventsArray';
+import { Button } from 'react-bootstrap';
 
-const Calendar = ({ history }) => {
+const Calendar = ({ history, takingScreenShot }) => {
   const location = useLocation();
   const search = queryString.parse(location.search);
   const eventsArray = makeEventsArray(search);
   const urlEvent = urlReader(search);
-  const searchDate = dateFns.parse(search.selected, 'yyyy-MM-dd', new Date());
-  const initialDate = dateFns.isValid(searchDate) ? searchDate : new Date();
 
-  const [currentMonth, setCurrentMonth] = useState(
-    urlEvent.startDate || new Date()
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(
+    takingScreenShot ? null : new Date()
   );
-  const [selectedDate, setSelectedDate] = useState(initialDate);
   const [edit, setEdit] = useState(false);
   const [eventDates, setEventDates] = useState(eventsArray || []);
   const [eventTitle, setEventTitle] = useState(search.title || '');
@@ -132,6 +131,11 @@ const Calendar = ({ history }) => {
     }
   };
 
+  const takeScreenshot = () => {
+    let url = `//${process.env.REACT_APP_DOMAIN}:${process.env.REACT_APP_API_PORT}/snap${location.search}`;
+    window.open(url);
+  };
+
   const renderCells = () => {
     const monthStart = dateFns.startOfMonth(currentMonth);
     const monthEnd = dateFns.endOfMonth(monthStart);
@@ -167,7 +171,6 @@ const Calendar = ({ history }) => {
             onClick={() => onDateClick(dateFns.format(cloneDay, 'yyyy-MM-dd'))}
           >
             <span className='number'>{formattedDate}</span>
-            {/* <span className="bg">{formattedDate}</span> */}
             {event ? (
               <div>&nbsp;</div>
             ) : (
@@ -180,7 +183,7 @@ const Calendar = ({ history }) => {
               </span>
             )}
             {/* Chained ternary checks if the current date being rendered is a member of the eventDates array, if 
-            not then null. Otherwise insert the event stripe and only put the title if it's the fisrt date of the event. */}
+            not then render null. Otherwise insert the event stripe and only put the title if it's the fisrt date of the event. */}
             {!eventDates.includes(
               currentDateString
             ) ? null : currentDateString === eventDates[0] ? (
@@ -208,6 +211,17 @@ const Calendar = ({ history }) => {
 
   return (
     <div className='calendar'>
+      {edit || takingScreenShot ? null : (
+        <div className='screenshot-button'>
+          <Button
+            onClick={takeScreenshot}
+            variant='primary'
+            className='btn-primary'
+          >
+            Generate Screenshot
+          </Button>
+        </div>
+      )}
       {edit ? (
         <Form
           closeForm={closeForm}
