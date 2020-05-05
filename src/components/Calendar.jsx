@@ -21,21 +21,17 @@ import { Button } from 'react-bootstrap';
 //   // defaults: '../../.env.defaults', // This is new
 // });
 
-const Calendar = ({ history }) => {
+const Calendar = ({ history, takingScreenShot }) => {
   const location = useLocation();
   const search = queryString.parse(location.search);
   const eventsArray = makeEventsArray(search);
   const urlEvent = urlReader(search);
 
-<<<<<<< HEAD
-  const [currentMonth, setCurrentMonth] = useState(
-    urlEvent.startDate || new Date()
-  );
-  const [selectedDate, setSelectedDate] = useState(initialDate);
-=======
+  console.log('props: ', takingScreenShot);
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(new Date());
->>>>>>> Added .env file with REACT_APP_ variables so react will recognize them. Button now opens new tab and takes screen shot. screen shot should be formated better.
+  const [selectedDate, setSelectedDate] = useState(
+    takingScreenShot ? null : new Date()
+  );
   const [edit, setEdit] = useState(false);
   const [eventDates, setEventDates] = useState(eventsArray || []);
   const [eventTitle, setEventTitle] = useState(search.title || '');
@@ -150,7 +146,7 @@ const Calendar = ({ history }) => {
   const takeScreenshot = () => {
     console.log('taking screenshot');
     console.log('process.env: ', process.env);
-    let url = `//${process.env.REACT_APP_URL}:${process.env.REACT_APP_API_PORT}/${location.search}`;
+    let url = `//${process.env.REACT_APP_URL}:${process.env.REACT_APP_API_PORT}/snap${location.search}`;
     console.log('url: ', url);
     window.open(url);
   };
@@ -230,7 +226,7 @@ const Calendar = ({ history }) => {
 
   return (
     <div className='calendar'>
-      {edit ? null : (
+      {edit || takingScreenShot ? null : (
         <div className='screenshot-button'>
           <Button
             onClick={takeScreenshot}

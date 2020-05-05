@@ -27,7 +27,11 @@ class App extends React.Component {
       <Router>
         <Switch>
           <Route exact path='/' component={Home} />
-          <Route exact path='/calendar.jpg' component={Calendar} />
+          <Route
+            exact
+            path='/calendar.jpg'
+            render={(props) => <Calendar {...props} takingScreenShot={true} />}
+          />
         </Switch>
       </Router>
     );
