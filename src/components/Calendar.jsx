@@ -9,17 +9,6 @@ import makeDateStrFromDateObj from '../helpers/makeDateStrFromDateObj';
 import urlReader from '../helpers/urlReader';
 import makeEventsArray from '../helpers/makeEventsArray';
 import { Button } from 'react-bootstrap';
-// import 'dotenv-defaults/config';
-// require('dotenv-defaults/config');
-// const path = require('path');
-// require('dotenv-defaults').config();
-// import 'dotenv-defaults/config';
-// require('dotenv').config({
-//   path:
-//     '/Users/MaxRosenthal/lighthouse/projects/react-calendar-api/.env.defaults',
-//   // encoding: 'utf8',
-//   // defaults: '../../.env.defaults', // This is new
-// });
 
 const Calendar = ({ history, takingScreenShot }) => {
   const location = useLocation();
