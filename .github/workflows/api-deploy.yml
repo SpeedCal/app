@@ -2,10 +2,7 @@ name: Deploy API to Amazon ECS
 
 on:
   push:
-    branches: [ master ]
-
-  pull_request:
-    branches: [ dev ]
+    branches: [ master, dev ]
     paths-ignore:
     - 'src/**'
     - 'test/app/**'
