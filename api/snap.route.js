@@ -15,7 +15,8 @@ exports.route = async (req, res) => {
   const filePath = util.buildFilepath(req._parsedUrl)
 
   if (!fs.existsSync(filePath)) {
-    const url = `${config.REACT_APP_URL}:${config.REACT_APP_PORT}${req.url}`
+    // Todo: will http:// work once SSL is enabled?
+    const url = `http://${config.REACT_APP_URL}:${config.REACT_APP_PORT}${req._parsedUrl.search}`
     await browser.storeSnapshot(url, filePath)
   }
 
