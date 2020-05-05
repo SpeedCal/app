@@ -2,7 +2,7 @@ name: Deploy API to Amazon ECS
 
 on:
   push:
-    branches: [ master, dev ]
+    branches: [ dev ]
     paths-ignore:
     - 'src/**'
     - 'test/app/**'
@@ -42,7 +42,7 @@ jobs:
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: .github/aws/task-definition.json
+        task-definition: .github/aws/task-definition-dev.json
         container-name: speedcal-api
         image: ${{ steps.build-image.outputs.image }}
 

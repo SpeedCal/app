@@ -1,5 +1,5 @@
 {
-  "family": "speedcal-api-task-definition",
+  "family": "speedcal-api-task-definition-dev",
   "executionRoleArn": "arn:aws:iam::942897609521:role/ecsTaskExecutionRole",
   "networkMode": "awsvpc",
   "containerDefinitions": [
