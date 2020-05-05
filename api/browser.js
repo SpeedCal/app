@@ -21,9 +21,8 @@ class Browser {
         args: ['--no-sandbox', '--disable-setuid-sandbox']
       } :
       {
-        headless: false,
-        slowMo: 250,
-        devtools: true,
+        headless: true,  // Change this to `false` to see the browser
+        devtools: false, // Change this to `true` to see devtools when browser is visible
       }
   }
 

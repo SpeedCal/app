@@ -26,7 +26,7 @@ RUN addgroup -S pptruser && adduser -S -g pptruser pptruser \
     && chown -R pptruser:pptruser /home/pptruser \
     && chown -R pptruser:pptruser /api /snapshots
 
-ADD package.json package-lock.json .env.defaults api/ /api/
+ADD package.json package-lock.json api/ /api/
 WORKDIR /api
 RUN npm ci \
  && chown -R pptruser:pptruser /api /snapshots

@@ -14,6 +14,7 @@ const config = require('./env').config()
 const util = require('./util')
 const error = require('./error')
 const browser = require('./browser')
+const snap = require('./snap.route')
 const slash = require('./slash.route')
 const stats = require('./stats.route')
 const logger = util.createLogger()
@@ -41,13 +42,14 @@ const listener = async () => {
 
   await browser.init()
   logger.info(`NODE_ENV = ${config.NODE_ENV}`)
-  logger.info(`API listening on http://localhost:${config.API_PORT}`)
+  logger.info(`API listening on http://localhost:${config.REACT_APP_API_PORT}`)
 
   // Public routes:
-  //app.get('/', slash.route)
-  //app.get('/stats', stats.route);
-  router.get('/', slash.route)
+  router.get('/', slash.route);
   app.use('/', router);
+
+  router.get('/snap', snap.route);
+  app.use('/snap', router);
 
   router.get('/stats', stats.route);
   app.use('/stats', router);
@@ -57,8 +59,7 @@ const listener = async () => {
 }
 
 
-
-const server = app.listen(config.API_PORT, async () => listener())
+const server = app.listen(config.REACT_APP_API_PORT, async () => listener())
 
 
 /**
