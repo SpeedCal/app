@@ -27,7 +27,6 @@ const Calendar = ({ history, takingScreenShot }) => {
   const eventsArray = makeEventsArray(search);
   const urlEvent = urlReader(search);
 
-  console.log('props: ', takingScreenShot);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(
     takingScreenShot ? null : new Date()
@@ -144,10 +143,7 @@ const Calendar = ({ history, takingScreenShot }) => {
   };
 
   const takeScreenshot = () => {
-    console.log('taking screenshot');
-    console.log('process.env: ', process.env);
-    let url = `//${process.env.REACT_APP_URL}:${process.env.REACT_APP_API_PORT}/snap${location.search}`;
-    console.log('url: ', url);
+    let url = `//${process.env.REACT_APP_DOMAIN}:${process.env.REACT_APP_API_PORT}/snap${location.search}`;
     window.open(url);
   };
 

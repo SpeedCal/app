@@ -13,7 +13,6 @@ import './styling/App.css';
 import './styling/Form.css';
 
 // import 'dotenv/config';
-console.log('1:', process.env);
 // require('dotenv').config({
 //   path:
 //     '/Users/MaxRosenthal/lighthouse/projects/react-calendar-api/.env.defaults',

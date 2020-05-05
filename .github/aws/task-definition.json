@@ -1,45 +1,43 @@
 {
-    "family": "speedcal-api-task-definition",
-    "executionRoleArn": "arn:aws:iam::942897609521:role/ecsTaskExecutionRole",
-    "networkMode": "awsvpc",
-    "containerDefinitions": [
+  "family": "speedcal-api-task-definition",
+  "executionRoleArn": "arn:aws:iam::942897609521:role/ecsTaskExecutionRole",
+  "networkMode": "awsvpc",
+  "containerDefinitions": [
+    {
+      "name": "speedcal-api",
+      "image": "942897609521.dkr.ecr.us-west-2.amazonaws.com/speedcal-api-ecr",
+      "cpu": 256,
+      "memory": 512,
+      "memoryReservation": 512,
+      "portMappings": [
         {
-            "name": "speedcal-api",
-            "image": "942897609521.dkr.ecr.us-west-2.amazonaws.com/speedcal-api-ecr",
-            "cpu": 256,
-            "memory": 512,
-            "memoryReservation": 512,
-            "portMappings": [
-                {
-                    "containerPort": 3001,
-                    "hostPort": 3001,
-                    "protocol": "tcp"
-                }
-            ],
-            "essential": true,
-            "environment": [
-                {"name": "ENV", "value": "AWS"},
-                {"name": "NODE_ENV", "value": "production"},
-                {"name": "REACT_APP_URL", "value": "dev.speedcal.date"},
-                {"name": "REACT_APP_PORT", "value": "80"},
-                {"name": "REACT_APP_API_URL", "value": "api.dev.speedcal.date"},
-                {"name": "REACT_APP_API_PORT", "value": "3001"}
-            ],
-            "logConfiguration": {
-                "logDriver": "awslogs",
-                "options": {
-                    "awslogs-group": "/ecs/speedcal-api-task-definition",
-                    "awslogs-region": "us-west-2",
-                    "awslogs-stream-prefix": "ecs"
-                }
-            }
+          "containerPort": 3001,
+          "hostPort": 3001,
+          "protocol": "tcp"
         }
-    ],
-    "volumes": [],
-    "placementConstraints": [],
-    "requiresCompatibilities": [
-        "FARGATE"
-    ],
-    "cpu": "256",
-    "memory": "512"
+      ],
+      "essential": true,
+      "environment": [
+        { "name": "ENV", "value": "AWS" },
+        { "name": "NODE_ENV", "value": "production" },
+        { "name": "REACT_APP_DOMAIN", "value": "dev.speedcal.date" },
+        { "name": "REACT_APP_PORT", "value": "80" },
+        { "name": "REACT_APP_API_URL", "value": "api.dev.speedcal.date" },
+        { "name": "REACT_APP_API_PORT", "value": "3001" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/speedcal-api-task-definition",
+          "awslogs-region": "us-west-2",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ],
+  "volumes": [],
+  "placementConstraints": [],
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512"
 }

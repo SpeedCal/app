@@ -5,23 +5,24 @@
  *   const config = require('./env').config()
  **/
 
-const path = require('path')
-require('dotenv').config()
-const snapDir = process.env.REL_SNAP_DIR || '../snapshots'
+const path = require('path');
+require('dotenv').config();
+const snapDir = process.env.REL_SNAP_DIR || '../snapshots';
 
-exports.config = () => Object.assign(
-  // Defaults:
-  {
-    REACT_APP_URL: 'localhost',
-    REACT_APP_PORT: 3000,
-    REACT_APP_API_PORT: 3001
-  },
+exports.config = () =>
+  Object.assign(
+    // Defaults:
+    {
+      REACT_APP_DOMAIN: 'localhost',
+      REACT_APP_PORT: 3000,
+      REACT_APP_API_PORT: 3001,
+    },
 
-  // Environment settings:
-  process.env,
+    // Environment settings:
+    process.env,
 
-  // Overrides:
-  {
-    ABS_SNAP_DIR: path.join(__dirname, snapDir),
-  }
-)
+    // Overrides:
+    {
+      ABS_SNAP_DIR: path.join(__dirname, snapDir),
+    }
+  );
